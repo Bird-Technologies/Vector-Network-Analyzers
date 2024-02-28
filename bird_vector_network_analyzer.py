@@ -220,11 +220,40 @@ class BirdVectorNetworkAnalyzer():
                 self._channel = None
                 self._trace = None
 
+                self.electrical_delay = self.ElectricalDelay(self._instr_obj)
+                self.offset = self.Offset(self._instr_obj)
+
             def _set_channel(self, channel):
                 self._channel = channel
+                self.electrical_delay._set_channel(self._set_channel)
             
             def _set_trace(self, trace):
                 self._trace = trace
+                self.electrical_delay._set_trace(self._trace)
+            
+            class ElectricalDelay():
+                def __init__(self, instrobj):
+                    self._instr_obj = instrobj
+                    self._channel = None
+                    self._trace = None
+                
+                def _set_channel(self, channel):
+                    self._channel = channel
+                
+                def _set_trace(self, trace):
+                    self._trace = trace
+            
+            class Offset():
+                def __init__(self, instrobj):
+                    self._instr_obj = instrobj
+                    self._channel = None
+                    self._trace = None
+                
+                def _set_channel(self, channel):
+                    self._channel = channel
+                
+                def _set_trace(self, trace):
+                    self._trace = trace
 
         class Data():
             def __init__(self, instrobj):
@@ -244,11 +273,25 @@ class BirdVectorNetworkAnalyzer():
                 self._channel = None
                 self._trace = None
 
+                self.time = self.Time(self._instr_obj)
+
             def _set_channel(self, channel):
                 self._channel = channel
             
             def _set_trace(self, trace):
                 self._trace = trace
+
+            class Time():
+                def __init__(self, instrobj):
+                    self._instr_obj = instrobj
+                    self._channel = None
+                    self._trace = None
+                
+                def _set_channel(self, channel):
+                    self._channel = channel
+                
+                def _set_trace(self, trace):
+                    self._trace = trace
 
         @property
         def format(self):
@@ -263,12 +306,215 @@ class BirdVectorNetworkAnalyzer():
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                
+                self.balance = self.Balance(self._instr_obj)
+                self.embed = self.Embed(self._instr_obj)
+                self.send = self.Send(self._instr_obj)
 
             def _set_channel(self, channel):
                 self._channel = channel
             
             def _set_trace(self, trace):
                 self._trace = trace
+            
+            class Balance():
+                def __init__(self, instrobj):
+                    self._instr_obj = instrobj
+                    self._channel = None
+                    self._trace = None
+
+                    self.czconversion = self.CZConversion(self._instr_obj)
+                    self.diff_matching_circuit = self.DifferentialMatchingCircuit(self._instr_obj)
+                    self.diffzconversion = self.DifferentialImpedanceConversion(self._instr_obj)
+                    self.parameter = self.Parameter(self._instr_obj)
+                    self.top = self.Top(self._instr_obj)
+
+
+                def _set_channel(self, channel):
+                    self._channel = channel
+                
+                def _set_trace(self, trace):
+                    self._trace = trace
+                
+                class CZConversion():
+                    def __init__(self, instrobj):
+                        self._instr_obj = instrobj
+                        self._channel = None
+                        self._trace = None
+
+                        self.balance_port = self.BalancePort(self._instr_obj)
+                    
+                    def _set_channel(self, channel):
+                        self._channel = channel
+                    
+                    def _set_trace(self, trace):
+                        self._trace = trace
+
+                    class BalancePort():
+                        def __init__(self, instrobj):
+                            self._instr_obj = instrobj
+                            self._channel = None
+                            self._trace = None
+                        
+                        def _set_channel(self, channel):
+                            self._channel = channel
+                        
+                        def _set_trace(self, trace):
+                            self._trace = trace
+
+                    @property
+                    def state(self):
+                        return 1
+                    
+                    @state.setter
+                    def state(self, state):
+                        v = state
+
+                @property
+                def device(self):
+                    return 1
+                
+                @device.setter
+                def device(self, type):
+                    val = type
+                
+                class DifferentialMatchingCircuit():
+                    def __init__(self, instrobj):
+                        self._instr_obj = instrobj
+                        self._channel = None
+                        self._trace = None
+                    
+                        self.balance_port = self.BalancePort(self._instr_obj)
+                    
+                    def _set_channel(self, channel):
+                        self._channel = channel
+                    
+                    def _set_trace(self, trace):
+                        self._trace = trace
+
+                    class BalancePort():
+                        def __init__(self, instrobj):
+                            self._instr_obj = instrobj
+                            self._channel = None
+                            self._trace = None
+                        
+                        def _set_channel(self, channel):
+                            self._channel = channel
+                        
+                        def _set_trace(self, trace):
+                            self._trace = trace
+
+                    @property
+                    def state(self):
+                        return 1
+                    
+                    @state.setter
+                    def state(self, state):
+                        v = state
+
+                class DifferentialImpedanceConversion():
+                    def __init__(self, instrobj):
+                        self._instr_obj = instrobj
+                        self._channel = None
+                        self._trace = None
+                    
+                        self.balance_port = self.BalancePort(self._instr_obj)
+                    
+                    def _set_channel(self, channel):
+                        self._channel = channel
+                    
+                    def _set_trace(self, trace):
+                        self._trace = trace
+
+                    class BalancePort():
+                        def __init__(self, instrobj):
+                            self._instr_obj = instrobj
+                            self._channel = None
+                            self._trace = None
+                        
+                        def _set_channel(self, channel):
+                            self._channel = channel
+                        
+                        def _set_trace(self, trace):
+                            self._trace = trace
+
+                    @property
+                    def state(self):
+                        return 1
+                    
+                    @state.setter
+                    def state(self, state):
+                        v = state
+
+                class Parameter():
+                    def __init__(self, instrobj):
+                        self._instr_obj = instrobj
+                        self._channel = None
+                        self._trace = None
+                    
+                    def _set_channel(self, channel):
+                        self._channel = channel
+                    
+                    def _set_trace(self, trace):
+                        self._trace = trace
+
+                class Top():
+                    def __init__(self, instrobj):
+                        self._instr_obj = instrobj
+                        self._channel = None
+                        self._trace = None
+                    
+                    def _set_channel(self, channel):
+                        self._channel = channel
+                    
+                    def _set_trace(self, trace):
+                        self._trace = trace
+
+            class Embed():
+                def __init__(self, instrobj):
+                    self._instr_obj = instrobj
+                    self._channel = None
+                    self._trace = None
+
+                    self.network = self.Network(self._instr_obj)
+                
+                def _set_channel(self, channel):
+                    self._channel = channel
+                
+                def _set_trace(self, trace):
+                    self._trace = trace
+
+                class Network():
+                    def __init__(self, instrobj):
+                        self._instr_obj = instrobj
+                        self._channel = None
+                        self._trace = None
+                    
+                    def _set_channel(self, channel):
+                        self._channel = channel
+                    
+                    def _set_trace(self, trace):
+                        self._trace = trace
+
+            class Send():
+                def __init__(self, instrobj):
+                    self._instr_obj = instrobj
+                    self._channel = None
+                    self._trace = None
+                
+                def _set_channel(self, channel):
+                    self._channel = channel
+                
+                def _set_trace(self, trace):
+                    self._trace = trace
+            
+            @property
+            def state(self):
+                return 1
+            
+            @state.setter
+            def state(self, state):
+                val = 1
         
         class Function():
             def __init__(self, instrobj):
