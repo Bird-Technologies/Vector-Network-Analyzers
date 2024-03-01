@@ -189,6 +189,8 @@ class BirdVectorNetworkAnalyzer():
             self._marker = None
             self._port = None
             self._parameter = None
+            self._standard = None
+            self._cal_kit = None
             self.conversion     = self.Conversion(self._instr_obj)
             self.data           = self.Data(self._instr_obj)
             self.fixturesimulate= self.FixtureSimulate(self._instr_obj)
@@ -241,9 +243,19 @@ class BirdVectorNetworkAnalyzer():
         
         def _set_port(self, port):
             self._port = port
+            self.conversion._set_port(self._port)
 
-        def _self_parameter(self, parameter):
+        def _set_parameter(self, parameter):
             self._parameter = parameter
+            self.conversion._set_parameter(self._parameter)
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+            self.conversion._set_standard(self._standard)
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
+            self.conversion._set_cal_kit(self._cal_kit)
 
         class Conversion():
             def __init__(self, instrobj):
@@ -253,6 +265,8 @@ class BirdVectorNetworkAnalyzer():
                 self._marker = None
                 self._port = None
                 self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
             def _set_channel(self, channel):
                 self._channel = channel
@@ -261,7 +275,19 @@ class BirdVectorNetworkAnalyzer():
                 self._trace = trace
 
             def _set_marker(self, marker):
-                self._marker(marker)
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
 
             @property
             def conversion(self):
@@ -285,6 +311,11 @@ class BirdVectorNetworkAnalyzer():
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
                 self.electrical_delay = self.ElectricalDelay(self._instr_obj)
                 self.offset = self.Offset(self._instr_obj)
@@ -297,6 +328,21 @@ class BirdVectorNetworkAnalyzer():
                 self._trace = trace
                 self.electrical_delay._set_trace(self._trace)
             
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
+
             class ElectricalDelay():
                 def __init__(self, instrobj):
                     self._instr_obj = instrobj
@@ -326,18 +372,43 @@ class BirdVectorNetworkAnalyzer():
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
             def _set_channel(self, channel):
                 self._channel = channel
             
             def _set_trace(self, trace):
                 self._trace = trace
-        
+
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
+
         class Filter():
             def __init__(self, instrobj):
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
                 self.time = self.Time(self._instr_obj)
 
@@ -346,6 +417,21 @@ class BirdVectorNetworkAnalyzer():
             
             def _set_trace(self, trace):
                 self._trace = trace
+            
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
 
             class Time():
                 def __init__(self, instrobj):
@@ -372,6 +458,11 @@ class BirdVectorNetworkAnalyzer():
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
                 
                 self.balance = self.Balance(self._instr_obj)
                 self.embed = self.Embed(self._instr_obj)
@@ -383,6 +474,21 @@ class BirdVectorNetworkAnalyzer():
             def _set_trace(self, trace):
                 self._trace = trace
             
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
+
             class Balance():
                 def __init__(self, instrobj):
                     self._instr_obj = instrobj
@@ -662,6 +768,11 @@ class BirdVectorNetworkAnalyzer():
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
             def _set_channel(self, channel):
                 self._channel = channel
@@ -669,11 +780,31 @@ class BirdVectorNetworkAnalyzer():
             def _set_trace(self, trace):
                 self._trace = trace
 
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
+
         class Hold():
             def __init__(self, instrobj):
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
             
             def _set_channel(self, channel):
                 self._channel = channel
@@ -682,11 +813,31 @@ class BirdVectorNetworkAnalyzer():
             def _set_trace(self, trace):
                 self._trace = trace
 
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
+
         class Limit():
             def __init__(self, instrobj):
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
                 self.report = self.Report(self._instr_obj)
                 self.offset = self.Offset(self._instr_obj)
             
@@ -696,6 +847,21 @@ class BirdVectorNetworkAnalyzer():
             
             def _set_trace(self, trace):
                 self._trace = trace
+
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
 
             class Report():
                 def __init__(self, instrobj):
@@ -726,54 +892,139 @@ class BirdVectorNetworkAnalyzer():
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
             def _set_channel(self, channel):
                 self._channel = channel
             
             def _set_trace(self, trace):
                 self._trace = trace
+
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
 
         class Math():
             def __init__(self, instrobj):
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
             def _set_channel(self, channel):
                 self._channel = channel
             
             def _set_trace(self, trace):
                 self._trace = trace
-        
+
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
+
         class MathStatistics():
             def __init__(self, instrobj):
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
             def _set_channel(self, channel):
                 self._channel = channel
             
             def _set_trace(self, trace):
                 self._trace = trace
+            
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
 
         class Parameter():
             def __init__(self, instrobj):
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
             def _set_channel(self, channel):
                 self._channel = channel
             
             def _set_trace(self, trace):
                 self._trace = trace
+            
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
 
         class RippleLimit():
             def __init__(self, instrobj):
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
             def _set_channel(self, channel):
                 self._channel = channel
@@ -781,30 +1032,85 @@ class BirdVectorNetworkAnalyzer():
             
             def _set_trace(self, trace):
                 self._trace = trace
+            
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
 
         class Smoothing():
             def __init__(self, instrobj):
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
             def _set_channel(self, channel):
                 self._channel = channel
             
             def _set_trace(self, trace):
                 self._trace = trace
-        
+
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
+
         class Transform():
             def __init__(self, instrobj):
                 self._instr_obj = instrobj
                 self._channel = None
                 self._trace = None
+                self._marker = None
+                self._port = None
+                self._parameter = None
+                self._standard = None
+                self._cal_kit = None
 
             def _set_channel(self, channel):
                 self._channel = channel
             
             def _set_trace(self, trace):
                 self._trace = trace
+
+            def _set_marker(self, marker):
+                self._marker = marker
+            
+            def _set_port(self, port):
+                self._port = port
+            
+            def _set_parameter(self, parameter):
+                self._parameter = parameter
+            
+            def _set_standard(self, standard):
+                self._standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self._cal_kit = kit
 
     class Display():
         def __init__(self, instrobj):
@@ -813,12 +1119,30 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace
+        
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
     
     class Format():
         def __init__(self, instrobj):
@@ -827,13 +1151,31 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace
-    
+
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
+
     class HardCopy():
         def __init__(self, instrobj):
             self._instr_obj = instrobj
@@ -841,12 +1183,30 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace
+        
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
     
     class Initiate():
         def __init__(self, instrobj):
@@ -855,13 +1215,31 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace
-    
+
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
+
     class Mmemory():
         def __init__(self, instrobj):
             self._instr_obj = instrobj
@@ -869,13 +1247,31 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace
-    
+
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
+        
     @property
     def output(self):
         return "y"
@@ -891,13 +1287,31 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace
-    
+
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
+            
     class Service():
         def __init__(self, instrobj):
             self._instr_obj = instrobj
@@ -905,12 +1319,30 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace
+
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
 
     class Source():
         def __init__(self, instrobj):
@@ -919,12 +1351,30 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace    
+
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
 
     class Status():
         def __init__(self, instrobj):
@@ -933,12 +1383,30 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace 
+
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
 
     class System():
         def __init__(self, instrobj):
@@ -947,12 +1415,30 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace   
+
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
 
     class Trigger():
         def __init__(self, instrobj):
@@ -961,9 +1447,27 @@ class BirdVectorNetworkAnalyzer():
             self._trace = None
             self._marker = None
             self._port = None
+            self._parameter = None
+            self._standard = None
+            self._cal_kit = None
 
         def _set_channel(self, channel):
             self._channel = channel
 
         def _set_trace(self, trace):
             self._trace = trace  
+        
+        def _set_marker(self, marker):
+            self._marker = marker
+        
+        def _set_port(self, port):
+            self._port = port
+        
+        def _set_parameter(self, parameter):
+            self._parameter = parameter
+        
+        def _set_standard(self, standard):
+            self._standard = standard
+        
+        def _set_cal_kit(self, kit):
+            self._cal_kit = kit
