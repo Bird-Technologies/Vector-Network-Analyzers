@@ -111,6 +111,17 @@ class BirdVectorNetworkAnalyzer():
     @cal_kit.setter
     def cal_kit(self, kit_number):
         self._cal_kit = kit_number
+        self.calculate._set_cal_kit(self._cal_kit)
+        self.display._set_cal_kit(self._cal_kit)
+        self.format._set_cal_kit(self._cal_kit)
+        self.hardcopy._set_cal_kit(self._cal_kit)
+        self.mmemory._set_cal_kit(self._cal_kit)
+        self.sense._set_cal_kit(self._cal_kit)
+        self.service._set_cal_kit(self._cal_kit)
+        self.source._set_cal_kit(self._cal_kit)
+        self.status._set_cal_kit(self._cal_kit)
+        self.system._set_cal_kit(self._cal_kit)
+        self.trigger._set_cal_kit(self._cal_kit)
 
     @property
     def channel(self):
