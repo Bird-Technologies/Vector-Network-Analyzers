@@ -2042,6 +2042,24 @@ class BirdVectorNetworkAnalyzer():
                 """
                 self.__instr_obj.write(f"SENS{self.__channel}:SWE:POIN {count}")  
 
+            @property
+            def point_time(self) -> float:
+                """Reads out the delay before measurement in each measurement point.
+
+                Returns:
+                    float: Time before each measurement point.
+                """
+                return float(self.__instr_obj.query(f"SENS{self.__channel}:SWE:POIN:TIME?").rstrip())
+
+            @point_time.setter
+            def point_time(self, time:float):
+                """Sets the delay before measurement in each measurement point.
+
+                Args:
+                    time (float): Time before each measurement point.
+                """
+                self.__instr_obj.write(f"SENS{self.__channel}:SWE:POIN:TIME {time}")  
+
     class Service():
         def __init__(self, instrobj):
             self.__instr_obj = instrobj
