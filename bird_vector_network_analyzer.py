@@ -1818,6 +1818,7 @@ class BirdVectorNetworkAnalyzer():
             self.__cal_kit = None
 
             self.frequency  = self.Frequency(self.__instr_obj)
+            self.sweep      = self.Sweep(self.__instr_obj)
 
         def _set_channel(self, channel):
             self.__channel = channel
@@ -1954,7 +1955,93 @@ class BirdVectorNetworkAnalyzer():
                     frequency (float): The frequency span in Hertz (Hz).
                 """
                 self.__instr_obj.write(f"SENS{self.__channel}:FREQ:SPAN {frequency}")
+
+            @property
+            def start(self) -> float:
+                """Gets the start value of the sweep range of a select channel.
+
+                Returns:
+                    float: The start frequency in Hertz (Hz).
+                """
+                return float(self.__instr_obj.query(f"SENS{self.__channel}:FREQ:STAR?").rstrip())
             
+            @start.setter
+            def start(self, frequency:float):
+                """Sets the start value of the sweep range of a select channel.
+
+                Args:
+                    frequency (_type_): The start frequency in Hertz (Hz).
+                """
+                self.__instr_obj.write(f"SENS{self.__channel}:FREQ:STAR {frequency}")
+
+            @property
+            def stop(self) -> float:
+                """Reads out the stimulus stop value of the sweep range for linear or logarithmic sweep type.
+
+                Returns:
+                    float: _description_
+                """
+                return float(self.__instr_obj.query(f"SENS{self.__channel}:FREQ:STOP?").rstrip())
+            
+            @stop.setter
+            def stop(self, frequency:float):
+                """Sets the stimulus stop value of the sweep range for linear or logarithmic sweep type.
+
+                Args:
+                    frequency (float): _description_
+                """
+                self.__instr_obj.write(f"SENS{self.__channel}:FREQ:STOP {frequency}")
+
+        class Sweep():
+            def __init__(self, instrobj):
+                self.__instr_obj = instrobj
+                self.__channel = None
+                self.__trace = None
+                self.__marker = None
+                self.__port = None
+                self.__parameter = None
+                self.__standard = None
+                self.__cal_kit = None
+
+            def _set_channel(self, channel):
+                self.__channel = channel
+
+            def _set_trace(self, trace):
+                self.__trace = trace
+
+            def _set_marker(self, marker):
+                self.__marker = marker
+            
+            def _set_port(self, port):
+                self.__port = port
+            
+            def _set_parameter(self, parameter):
+                self.__parameter = parameter
+            
+            def _set_standard(self, standard):
+                self.__standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self.__cal_kit = kit 
+
+            @property
+            def points(self) -> int:
+                """Reads out the number of measurement points.
+
+                Returns:
+                    int: Number of measurement points.
+                """
+                return int(self.__instr_obj.query(f"SENS{self.__channel}:SWE:POIN?").rstrip())
+
+            @points.setter
+            def points(self, count:int):
+                """Sets the number of measurement points.
+
+                Args:
+                    count (int): Number of measurement points. 
+                """
+                self.__instr_obj.write(f"SENS{self.__channel}:SWE:POIN {count}")  
+
     class Service():
         def __init__(self, instrobj):
             self.__instr_obj = instrobj
