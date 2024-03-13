@@ -253,7 +253,7 @@ class BirdVectorNetworkAnalyzer():
             self.data           = self.Data(self.__instr_obj)
             self.fixturesimulate= self.FixtureSimulate(self.__instr_obj)
             self.function       = self.Function(self.__instr_obj)
-            self.hold           = self.Hold(self, self.__instr_obj)
+            self.hold           = self.Hold(self.__instr_obj)
             self.limit          = self.Limit(self.__instr_obj)
             self.marker         = self.Marker(self.__instr_obj)
             self.math           = self.Math(self.__instr_obj)
@@ -389,7 +389,7 @@ class BirdVectorNetworkAnalyzer():
 
             def _set_channel(self, channel):
                 self.__channel = channel
-                self.electrical_delay._set_channel(self._set__channel)
+                self.electrical_delay._set_channel(self.__channel)
             
             def _set_trace(self, trace):
                 self.__trace = trace
@@ -1294,7 +1294,7 @@ class BirdVectorNetworkAnalyzer():
             
             def _set_channel(self, channel):
                 self.__channel = channel
-                self.report._set_channel = self.__channel
+                #self.report._set_channel = self.__channel
             
             def _set_trace(self, trace):
                 self.__trace = trace
@@ -1554,7 +1554,7 @@ class BirdVectorNetworkAnalyzer():
 
             def _set_channel(self, channel):
                 self.__channel = channel
-                self.report._set_channel = self.__channel
+                #self.report._set_channel = self.__channel
             
             def _set_trace(self, trace):
                 self.__trace = trace
@@ -1817,26 +1817,143 @@ class BirdVectorNetworkAnalyzer():
             self.__standard = None
             self.__cal_kit = None
 
+            self.frequency  = self.Frequency(self.__instr_obj)
+
         def _set_channel(self, channel):
             self.__channel = channel
+            self.frequency._set_channel(self.__channel)
 
         def _set_trace(self, trace):
             self.__trace = trace
+            self.frequency._set_trace(self.__trace)
 
         def _set_marker(self, marker):
             self.__marker = marker
+            self.frequency._set_marker(self.__marker)
         
         def _set_port(self, port):
             self.__port = port
+            self.frequency._set_port(self.__port)
         
         def _set_parameter(self, parameter):
             self.__parameter = parameter
+            self.frequency._set_parameter(self.__parameter)
         
         def _set_standard(self, standard):
             self.__standard = standard
+            self.frequency._set_standard(self.__parameter)
         
         def _set_cal_kit(self, kit):
             self.__cal_kit = kit
+            self.frequency._set_cal_kit(self.__cal_kit)
+        
+        class Frequency():
+            """The frequency menu of commands is inclusive of the following:
+                * center
+                * data?
+                * frequency
+                * span
+                * start
+                * stop
+            """
+            def __init__(self, instrobj):
+                self.__instr_obj = instrobj
+                self.__channel = None
+                self.__trace = None
+                self.__marker = None
+                self.__port = None
+                self.__parameter = None
+                self.__standard = None
+                self.__cal_kit = None
+
+            def _set_channel(self, channel):
+                self.__channel = channel
+
+            def _set_trace(self, trace):
+                self.__trace = trace
+
+            def _set_marker(self, marker):
+                self.__marker = marker
+            
+            def _set_port(self, port):
+                self.__port = port
+            
+            def _set_parameter(self, parameter):
+                self.__parameter = parameter
+            
+            def _set_standard(self, standard):
+                self.__standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self.__cal_kit = kit
+
+            @property
+            def frequency(self):
+                """Reads out the fixed frequency value when the power sweep type selected.
+
+                Returns:
+                    float: The frequency value within the frequency limits of the analyzer.
+                """
+                return float(self.__instr_obj.query(f"SENS{self.__channel}:FREQ?").rstrip())
+            
+            @frequency.setter
+            def frequency(self, value:float):
+                """Sets the fixed frequency value when the power sweep type selected.
+
+                Args:
+                    value (float): The frequency value within the frequency limits of the analyzer.
+                """
+                self.__instr_obj.write(f"SENS{self.__channel}:FREQ {value}")
+            
+            @property
+            def data(self) -> list[int]:
+                """ Reads out the frequency array of the measurement points.
+                    The array size is N, where N is the number of measurement points.
+                    For the n–th point, where n from 1 to N:
+                    <numeric n> the frequency value at the n–th measurement point
+
+                Returns:
+                    list[int]: <numeric 1>, <numeric 2>, …<numeric N>
+                """
+                mystr = self.__instr_obj.query(f"SENS{self.__channel}:FREQ:DATA?").rstrip()
+                my_list = mystr.split(',')
+                return my_list
+            
+            @property
+            def center(self) -> float:
+                """Gets/Sets the center value of the sweep range of a select channel.
+
+                Returns:
+                    float: The center frequency in Hertz (Hz).
+                """
+                return float(self.__instr_obj.query(f"SENS{self.__channel}:FREQ:CENT?").rstrip())
+            
+            @center.setter
+            def center(self, frequency:float):
+                """Sets the center value of the sweep range of a select channel.
+
+                Args:
+                    frequency (float): The center frequency in Hertz (Hz).
+                """
+                self.__instr_obj.write(f"SENS{self.__channel}:FREQ:CENT {frequency}")
+
+            @property
+            def span(self) -> float:
+                """Reads out the stimulus span value of the sweep range for linear or logarithmic sweep type.
+
+                Returns:
+                    float: The frequency span in Hertz (Hz).
+                """
+                return float(self.__instr_obj.query(f"SENS{self.__channel}:FREQ:SPAN?").rstrip())
+            
+            @span.setter
+            def span(self, frequency:float):
+                """Sets the stimulus span value of the sweep range for linear or logarithmic sweep type.
+
+                Args:
+                    frequency (float): The frequency span in Hertz (Hz).
+                """
+                self.__instr_obj.write(f"SENS{self.__channel}:FREQ:SPAN {frequency}")
             
     class Service():
         def __init__(self, instrobj):
