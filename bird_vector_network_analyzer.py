@@ -249,6 +249,7 @@ class BirdVectorNetworkAnalyzer():
             self.__cal_kit = None
 
             self.conversion     = self.Conversion(self.__instr_obj)
+            self.correction     = self.Correction(self.__instr_obj)
             self.data           = self.Data(self.__instr_obj)
             self.fixturesimulate= self.FixtureSimulate(self.__instr_obj)
             self.function       = self.Function(self.__instr_obj)
@@ -265,6 +266,7 @@ class BirdVectorNetworkAnalyzer():
         def _set_channel(self, channel):
             self.__channel = channel
             self.conversion._set_channel(self.__channel)
+            self.correction._set_channel(self.__channel)
             self.data._set_channel(self.__channel)
             self.fixturesimulate._set_channel(self.__channel)
             self.function._set_channel(self.__channel)
@@ -363,73 +365,6 @@ class BirdVectorNetworkAnalyzer():
             def conversion_function(self, function):
                 val = f"CALC{self.__channel}:CONV:FUNC {function}"
 
-            class ElectricalDelay():
-                def __init__(self, instrobj):
-                    self.__instr_obj = instrobj
-                    self.__channel = None
-                    self.__trace = None
-                    self.__marker = None
-
-                    self.distance = self.Distance(self.__instr_obj)
-                
-                def _set_channel(self, channel):
-                    self.__channel = channel
-                    self.distance._set_channel(self.__channel)
-                
-                def _set_trace(self, trace):
-                    self.__trace = trace
-                    self.distance._set_trace(self.__trace)
-
-                def _set_marker(self, marker):
-                    self.__marker = marker
-                    self.distance._set_marker(self.__marker)
-
-                class Distance():
-                    def __init(self, instrobj):
-                        self.__instr_obj = instrobj
-                        self.__channel = None
-                        self.__trace = None
-                        self.__marker = None
-                    
-                    def _set_channel(self, channel):
-                        self.__channel = channel
-                    
-                    def _set_trace(self, trace):
-                        self.__trace = trace
-
-                    def _set_marker(self, marker):
-                        self.__marker = marker
-
-                    @property
-                    def distance(self):
-                        """Reads out the value of the equivalent distance in the electrical delay function. 
-
-                        Returns:
-                            float: The distance value.
-                        """
-                        return float(self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:EDEL:DIST?").rstrip())
-                    
-                    @distance.setter
-                    def distance(self, dist:float=0.1):
-                        """Sets the value of the equivalent distance in the electrical delay function. 
-
-                        Args:
-                            dist (float): The distance value.
-                        """
-                        self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:EDEL:DIST {dist}")
-                    
-                    @property
-                    def units(self):
-                        return 1
-                    
-                    @units.setter
-                    def units(self, units):
-                        val = units
-            
-            class Offset():
-                def __init__(self, instrobj):
-                    self.__instr_obj = instrobj
-            
             @property
             def state(self):
                 return f"CALC{self.__channel}:CONV:FUNC?"
@@ -449,8 +384,8 @@ class BirdVectorNetworkAnalyzer():
                 self.__standard = None
                 self.__cal_kit = None
 
-                self.electrical_delay = self.ElectricalDelay(self.__instr_obj)
-                self.offset = self.Offset(self.__instr_obj)
+                self.electrical_delay   = self.ElectricalDelay(self.__instr_obj)
+                self.offset             = self.Offset(self.__instr_obj)
 
             def _set_channel(self, channel):
                 self.__channel = channel
@@ -507,6 +442,66 @@ class BirdVectorNetworkAnalyzer():
                 def _set_cal_kit(self, kit):
                     self.__cal_kit = kit
             
+                class Distance():
+                    def __init(self, instrobj):
+                        self.__instr_obj = instrobj
+                        self.__channel = None
+                        self.__trace = None
+                        self.__marker = None
+                    
+                    def _set_channel(self, channel):
+                        self.__channel = channel
+                    
+                    def _set_trace(self, trace):
+                        self.__trace = trace
+
+                    def _set_marker(self, marker):
+                        self.__marker = marker
+
+                    @property
+                    def distance(self):
+                        """Reads out the value of the equivalent distance in the electrical delay function. 
+
+                        Returns:
+                            float: The distance value.
+                        """
+                        return float(self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:EDEL:DIST?").rstrip())
+                    
+                    @distance.setter
+                    def distance(self, dist:float=0.1):
+                        """Sets the value of the equivalent distance in the electrical delay function. 
+
+                        Args:
+                            dist (float): The distance value.
+                        """
+                        self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:EDEL:DIST {dist}")
+                    
+                    @property
+                    def units(self):
+                        return 1
+                    
+                    @units.setter
+                    def units(self, units):
+                        val = units
+
+                @property
+                def media(self):
+                    """This command reads the type of media in the electrical delay function.
+
+                    Returns:
+                        str: Return COAX for coaxial or WAVE for waveguide. 
+                    """
+                    return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:EDEL:MED?").rstrip()
+                
+                @media.setter
+                def media(self, type):
+                    """_summary_This command sets the type of media in the electrical delay function.
+
+                    Args:
+                        type (str): Pass COAX for coaxial or WAVE for waveguide.
+                    """
+                    self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:EDEL:MED {type}")
+
             class Offset():
                 def __init__(self, instrobj):
                     self.__instr_obj = instrobj
