@@ -441,6 +441,42 @@ class BirdVectorNetworkAnalyzer():
                 
                 def _set_cal_kit(self, kit):
                     self.__cal_kit = kit
+                
+                @property
+                def media(self) -> str:
+                    """This command gets the type of media in the electrical delay function.
+
+                    Returns:
+                        str: COAXial or WAVEguide
+                    """
+                    return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:EDEL:MED?").rstrip()
+                
+                @media.setter
+                def media(self, type:str):
+                    """This command sets the type of media in the electrical delay function.
+
+                    Args:
+                        type (str): COAXial or WAVEguide
+                    """
+                    self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:EDEL:MED {type}")
+                
+                @property
+                def time(self) -> float:
+                    """This command gets the electrical delay time of the active or selected channel and trace.
+
+                    Returns:
+                        float: Electrical time delay from -10.0 to 10.0
+                    """
+                    return float(self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:EDEL:TIME?").rstrip())
+                
+                @time.setter
+                def time(self, value:float):
+                    """This command sets the electrical delay time of the active or selected channel and trace.
+
+                    Args:
+                        value (float): Electrical time delay from -10.0 to 10.0
+                    """
+                    self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:EDEL:TIME {value}")
             
                 class Distance():
                     def __init(self, instrobj):
@@ -534,6 +570,24 @@ class BirdVectorNetworkAnalyzer():
                 def _set_cal_kit(self, kit):
                     self.__cal_kit = kit
 
+                @property
+                def phase(self) -> float:
+                    """This command gets the phase offset of the active or selected channel and trace.
+
+                    Returns:
+                        float: Phase in degrees. 
+                    """
+                    return float(self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:OFFS:PHAS?").rstrip())
+                
+                @phase.setter
+                def phase(self, value:float):
+                    """This command sets the phase offset of the active or selected channel and trace.
+
+                    Args:
+                        value (float): Phase in degrees, -360.0 to 360.0.
+                    """
+                    self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:CORR:OFFS:PHAS {value}")
+
         class Data():
             def __init__(self, instrobj):
                 self.__instr_obj = instrobj
@@ -565,6 +619,69 @@ class BirdVectorNetworkAnalyzer():
             
             def _set_cal_kit(self, kit):
                 self.__cal_kit = kit
+
+            @property
+            def format_data(self) -> list[float]:
+                """For the active or selected trace of a given channel, this command returns the formatted data array.
+
+                Returns:
+                    list[float]: Formatted data array as a list. 
+                """
+                strlist = self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:FDAT?").rstrip().split(',')
+                return strlist
+            
+            @format_data.setter
+            def format_data(self, numeric_list:list[float]):
+                """For the active or selected trace of a given channel, this command writes out the formatted data array.
+
+                Args:
+                    numeric_list (list[float]): Formatted data array as a list.
+                """
+                strlist = ""
+                for val in numeric_list:
+                    strlist = strlist + str(val) + ","
+                self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:FDAT {strlist}")
+            
+            @property
+            def mult_trace_format_data(self) -> list[float]:
+                """This command gets the formatted data array of multiple traces (traces n, m, .... to l) of the selected channel
+
+                Returns:
+                    list[float]: Formatted data array of multiple traces as a list. 
+                """
+                strlist = self.__instr_obj.query(f"CALC{self.__channel}:DATA:MDAT?").rstrip().split(',')
+                return strlist
+            
+            @property
+            def mult_trace_corrected_data(self) -> list[float]:
+                """This command gets the corrected data array of multiple traces (traces n, m, .... to l) of the selected channel
+
+                Returns:
+                    list[float]: Corrected data array of multiple traces as a list. 
+                """
+                strlist = self.__instr_obj.query(f"CALC{self.__channel}:DATA:SDAT?").rstrip().split(',')
+                return strlist
+            
+            @property
+            def formatted_memory(self) -> list[float]:
+                """This command gets the formatted memory array of the active or selected channel and trace. 
+
+                Returns:
+                    list[float]: _description_
+                """
+                return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:FMEM?")
+            
+            @formatted_memory.setter
+            def formatted_memory(self, numeric_list:list[float]):
+                """This command sets the formatted memory array of the active or selected channel and trace. 
+
+                Args:
+                    numeric_list (list[float]): _description_
+                """
+                strlist = ""
+                for val in numeric_list:
+                    strlist = strlist + str(val) + ","
+                self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:FMEM {numeric_list}")
 
         class Filter():
             def __init__(self, instrobj):
