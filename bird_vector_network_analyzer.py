@@ -667,21 +667,72 @@ class BirdVectorNetworkAnalyzer():
                 """This command gets the formatted memory array of the active or selected channel and trace. 
 
                 Returns:
-                    list[float]: _description_
+                    list[float]: 
                 """
-                return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:FMEM?")
+                return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:FMEM?").rstrip().split(',')
             
             @formatted_memory.setter
             def formatted_memory(self, numeric_list:list[float]):
                 """This command sets the formatted memory array of the active or selected channel and trace. 
 
                 Args:
-                    numeric_list (list[float]): _description_
+                    numeric_list (list[float]): Values of formatted memory. 
                 """
                 strlist = ""
                 for val in numeric_list:
                     strlist = strlist + str(val) + ","
                 self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:FMEM {numeric_list}")
+            
+            @property
+            def corrected_data(self) -> list[float]:
+                """This command gets the corrected data array of the active or selected channel and trace. 
+
+                Returns:
+                    list[float]: Values of corrected data. 
+                """
+                return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:SDAT?").rstrip().split(',')
+            
+            @corrected_data.setter
+            def corrected_data(self, numeric_list:list[float]):
+                """This command sets the corrected data array of the active or selected channel and trace. 
+
+                Args:
+                    numeric_list (list[float]): Values of corrected data.
+                """
+                strlist = ""
+                for val in numeric_list:
+                    strlist = strlist + str(val) + ","
+                self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:SDAT {numeric_list}")
+            
+            @property
+            def corrected_memory(self) -> list[float]:
+                """This command gets the corrected memory array of the active or selected channel and trace. 
+
+                Returns:
+                    list[float]: Values of corrected memory. 
+                """
+                return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:SMEM?").rstrip().split(',')
+            
+            @corrected_memory.setter
+            def corrected_memory(self, numeric_list:list[float]):
+                """This command sets the corrected memory array of the active or selected channel and trace. 
+
+                Args:
+                    numeric_list (list[float]): Values of corrected memory.
+                """
+                strlist = ""
+                for val in numeric_list:
+                    strlist = strlist + str(val) + ","
+                self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:SMEM {numeric_list}")
+            
+            @property
+            def x_axis(self) -> list[float]:
+                """This command reads the data of measurement points of X axis of the active or selected channel and trace.
+
+                Returns:
+                    list[float]: Values of x-axis measurement points.
+                """
+                return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:DATA:XAX?").rstrip().split(',')
 
         class Filter():
             def __init__(self, instrobj):
@@ -748,6 +799,106 @@ class BirdVectorNetworkAnalyzer():
                 
                 def _set_cal_kit(self, kit):
                     self.__cal_kit = kit
+                
+                @property
+                def type(self) -> str:
+                    """This command gets the gate type used for the gating function of the time domain function of the acive or selected channel and trace.
+
+                    Returns:
+                        str: Responds with BPASs or NOTCh.
+                    """
+                    return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:FILT:TIME:TYPE?")
+                
+                @type.setter
+                def type(self, type:str=""):
+                    """This command sets the gate type used for the gating function of the time domain function of the acive or selected channel and trace.
+
+                    Args:
+                        type (str, optional): BPASs or NOTCh. Defaults to "BPAS".
+                    """
+                    self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:FILT:TIME:TYPE {type}")
+
+                @property
+                def center(self) -> float:
+                    """This command gets the center value of the gate used for the gating function of the time domain function of the active or selected channel and trace. 
+
+                    Returns:
+                        float: The center value from -66.73E9 to +66.73E9.
+                    """
+                    return float(self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:FILT:TIME:CENT?").rstrip())
+                
+                @center.setter
+                def center(self, value:float):
+                    """This command sets the center value of the gate used for the gating function of the time domain function of the active or selected channel and trace. 
+
+                    Args:
+                        value (float): The center value -66.73E9 to +66.73E9.
+                    """
+                    self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:FILT:TIME:CENT {value}")
+
+                @property
+                def shape(self) -> str:
+                    """This command gets the shape of the gate used for the gating function of the time domain function of the active or selected channel and trace. 
+
+                    Returns:
+                        str: Either MAXimum, MINimum, NORMal, or WIDE
+                    """
+                    return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:FILT:TIME:SHAP?").rstrip()
+                
+                @shape.setter
+                def shape(self, shape:str="NORM"):
+                    """This command sets the shape of the gate used for the gating function of the time domain function of the active or selected channel and trace. 
+
+                    Args:
+                        shape (str, optional): Pass MAXimum, MINimum, NORMal, or WIDE. Defaults to "NORM".
+                    """
+                    self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:FILT:TIME:SHAP {shape}")
+
+                @property
+                def start(self) -> float:
+                    """This command gets the start value of the gate used for the gating function of the time domain function of the active or selected channel and trace. 
+
+                    Returns:
+                        float: The start value for the gating function. 
+                    """
+                    return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}:FILT:TIME:STAR?")
+                
+                @start.setter
+                def start(self, value:float):
+                    """This command sets the start value of the gate used for the gating function of the time domain function of the active or selected channel and trace. 
+
+                    Args:
+                        value (float): The start value for the gating function. 
+                    """
+                    self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:FILT:TIME:STAR {value}")
+                
+                @property
+                def state(self) -> bool:
+                    """Reports the state of the gating function of the time domain function of the active or selected channel and trace. 
+
+                    Returns:
+                        bool: _description_
+                    """
+                    valstr = self.__instr_obj.query(f"CALC{self.__trace}:TRAC{self.__trace}:FILT:TIME:STAT?").rstrip()
+                    if "0" in valstr:
+                        retval = False
+                    else:
+                        retval = True
+                    return retval
+
+                @state.setter
+                def state(self, enabled:bool=False):
+                    """This command turns ON/OFF the gating function of the time domain function of the active or selected channel and trace. 
+
+                    Args:
+                        enabled (bool, optional): False = OFF, True = ON. Defaults to False.
+                    """
+                    altstr = ""
+                    if enabled is False:
+                        altstr = "OFF"
+                    else:
+                        altstr = "ON"
+                    self.__instr_obj.write(f"CALC{self.__trace}:TRAC{self.__trace}:FILT:TIME:STATe {altstr}")
 
         @property
         def format(self):
