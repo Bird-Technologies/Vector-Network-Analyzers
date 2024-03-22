@@ -104,6 +104,16 @@ class BirdVectorNetworkAnalyzer():
         """
         self.write("ABOR")
 
+    def get_error_list(self) -> list[str]:
+        fnclst = []
+        while True:
+            tmpstr = self.__instr_obj.query("SYST:ERR?")
+            if "No error" in tmpstr:
+                break
+            else:
+                fnclst.append(tmpstr)
+        return fnclst
+
     @property
     def cal_kit(self):
         return self.__cal_kit
@@ -251,6 +261,7 @@ class BirdVectorNetworkAnalyzer():
             self.conversion     = self.Conversion(self.__instr_obj)
             self.correction     = self.Correction(self.__instr_obj)
             self.data           = self.Data(self.__instr_obj)
+            self.format         = self.Format(self.__instr_obj)
             self.fixturesimulate= self.FixtureSimulate(self.__instr_obj)
             self.function       = self.Function(self.__instr_obj)
             self.hold           = self.Hold(self.__instr_obj)
@@ -268,6 +279,7 @@ class BirdVectorNetworkAnalyzer():
             self.conversion._set_channel(self.__channel)
             self.correction._set_channel(self.__channel)
             self.data._set_channel(self.__channel)
+            self.format._set_channel(self.__channel)
             self.fixturesimulate._set_channel(self.__channel)
             self.function._set_channel(self.__channel)
             self.hold._set_channel(self.__channel)
@@ -284,6 +296,7 @@ class BirdVectorNetworkAnalyzer():
             self.__trace = trace
             self.conversion._set_trace(self.__trace)
             self.data._set_trace(self.__trace)
+            self.format._set_trace(self.__trace)
             self.fixturesimulate._set_trace(self.__trace)
             self.function._set_trace(self.__trace)
             self.hold._set_trace(self.__trace)
@@ -900,13 +913,55 @@ class BirdVectorNetworkAnalyzer():
                         altstr = "ON"
                     self.__instr_obj.write(f"CALC{self.__trace}:TRAC{self.__trace}:FILT:TIME:STATe {altstr}")
 
-        @property
-        def format(self):
-            return 0
-        
-        @format.setter
-        def format(self, format):
-            val = format
+        class Format():
+            def __init__(self, instrobj):
+                self.__instr_obj = instrobj
+                self.__channel = None
+                self.__trace = None
+                self.__marker = None
+                self.__port = None
+                self.__parameter = None
+                self.__standard = None
+                self.__cal_kit = None
+
+            def _set_channel(self, channel):
+                self.__channel = channel
+            
+            def _set_trace(self, trace):
+                self.__trace = trace
+            
+            def _set_marker(self, marker):
+                self.__marker = marker
+            
+            def _set_port(self, port):
+                self.__port = port
+            
+            def _set_parameter(self, parameter):
+                self.__parameter = parameter
+            
+            def _set_standard(self, standard):
+                self.__standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self.__cal_kit = kit
+
+            @property
+            def type(self) -> str:
+                """This command gets the data format of the active trace of a select channel.
+
+                Returns:
+                    str: Returned format type of MLOG, PHAS, GDEL, SLIN, SLOG, SCOM, SMIT, SADM, PLIN, PLOG, POL, MLIN, SWR, REAL, IMAG or UPH.
+                """
+                return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}>:FORMat?")
+            
+            @type.setter
+            def type(self, type:str="MLOG"):
+                """This command sets the data format of the active trace of a select channel.
+
+                Args:
+                    type (str, optional): Use one of the following - MLOGarithmic, PHASe, GDELay, SLINear, SLOGarithmic, SCOMplex, SMITh, SADMittance, PLINear, PLOGarithmic, POLar, MLINear, SWR, REAL, IMAGinary, UPHase. Defaults to "MLOG".
+                """
+                self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:FORMat {type}")
 
         class FixtureSimulate():
             def __init__(self, instrobj):
@@ -1528,26 +1583,68 @@ class BirdVectorNetworkAnalyzer():
                 self.__standard = None
                 self.__cal_kit = None
 
+                self.domain = self.Domain(self.__instr_obj)
+
             def _set_channel(self, channel):
                 self.__channel = channel
+                self.domain._set_channel(self.__channel)
             
             def _set_trace(self, trace):
                 self.__trace = trace
+                self.domain._set_trace(self.__trace)
 
             def _set_marker(self, marker):
                 self.__marker = marker
+                self.domain._set_marker(self.__marker)
             
             def _set_port(self, port):
                 self.__port = port
+                self.domain._set_port(self.__port)
             
             def _set_parameter(self, parameter):
                 self.__parameter = parameter
+                self.domain._set_parameter(self.__parameter)
             
             def _set_standard(self, standard):
                 self.__standard = standard
+                self.domain._set_standard(self.__standard)
             
             def _set_cal_kit(self, kit):
                 self.__cal_kit = kit
+                self.domain._set_cal_kit(self.__cal_kit)
+
+            class Domain():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                
+                def _set_trace(self, trace):
+                    self.__trace = trace
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                
+                def _set_port(self, port):
+                    self.__port = port
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                
+                def _set_cal_kit(self, kit):
+                    self.__cal_kit = kit
+
 
         class Hold():
             def __init__(self, instrobj):
@@ -2085,36 +2182,219 @@ class BirdVectorNetworkAnalyzer():
             self.__standard = None
             self.__cal_kit = None
 
+            self.correction = self.Correction(self.__instr_obj)
             self.frequency  = self.Frequency(self.__instr_obj)
             self.sweep      = self.Sweep(self.__instr_obj)
 
         def _set_channel(self, channel):
             self.__channel = channel
+            self.correction._set_channel(self.__channel)
             self.frequency._set_channel(self.__channel)
 
         def _set_trace(self, trace):
             self.__trace = trace
+            self.correction._set_trace(self.__trace)
             self.frequency._set_trace(self.__trace)
 
         def _set_marker(self, marker):
             self.__marker = marker
+            self.correction._set_marker(self.__marker)
             self.frequency._set_marker(self.__marker)
         
         def _set_port(self, port):
             self.__port = port
+            self.correction._set_port(self.__port)
             self.frequency._set_port(self.__port)
         
         def _set_parameter(self, parameter):
             self.__parameter = parameter
+            self.correction._set_parameter(self.__parameter)
             self.frequency._set_parameter(self.__parameter)
         
         def _set_standard(self, standard):
             self.__standard = standard
+            self.correction._set_standard(self.__standard)
             self.frequency._set_standard(self.__parameter)
         
         def _set_cal_kit(self, kit):
             self.__cal_kit = kit
+            self.correction._set_cal_kit(self.__cal_kit)
             self.frequency._set_cal_kit(self.__cal_kit)
+        
+        class Correction():
+            def __init__(self, instrobj):
+                self.__instr_obj = instrobj
+                self.__channel = None
+                self.__trace = None
+                self.__marker = None
+                self.__port = None
+                self.__parameter = None
+                self.__standard = None
+                self.__cal_kit = None
+
+                self.collection = self.Collection(self.__instr_obj)
+
+            def _set_channel(self, channel):
+                self.__channel = channel
+                self.collection._set_channel(self.__channel)
+
+            def _set_trace(self, trace):
+                self.__trace = trace
+                self.collection._set_trace(self.__trace)
+
+            def _set_marker(self, marker):
+                self.__marker = marker
+                self.collection._set_marker(self.__marker)
+            
+            def _set_port(self, port):
+                self.__port = port
+                self.collection._set_port(self.__port)
+            
+            def _set_parameter(self, parameter):
+                self.__parameter = parameter
+                self.collection._set_parameter(self.__parameter)
+            
+            def _set_standard(self, standard):
+                self.__standard = standard
+                self.collection._set_standard(self.__standard)
+            
+            def _set_cal_kit(self, kit):
+                self.__cal_kit = kit
+                self.collection._set_cal_kit(self.__cal_kit)
+            
+            class Collection():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
+                    self.calkit     = self.CalKit(self.__instr_obj)
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                    self.calkit._set_channel(self.__channel)
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                    self.calkit._set_trace(self.__trace)
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                    self.calkit._set_marker(self.__marker)
+                
+                def _set_port(self, port):
+                    self.__port = port
+                    self.calkit._set_port(self.__port)
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                    self.calkit._set_parameter(self.__parameter)
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                    self.calkit._set_standard(self.__standard)
+                
+                def _set_cal_kit(self, kit):
+                    self.__cal_kit = kit
+                    self.calkit._set_cal_kit(self.__cal_kit)
+
+                def calibrate_load(self, port:int=1):
+                    """Measures the calibration data of the load standard for the specified port.
+
+                    Args:
+                        port (int, optional): The number of port 1 to 4 (model dependent). Defaults to 1.
+                    """
+                    self.__instr_obj.write(f"SENS:CORR:COLL:LOAD {port}")
+
+                def calibrate_open(self, port:int=1):
+                    """Measures the calibration data of the open standard for the specified port.
+
+                    Args:
+                        port (int, optional): The number of port 1 to 4 (model dependent). Defaults to 1.
+                    """
+                    self.__instr_obj.write(f"SENS:CORR:COLL:OPEN {port}")
+                
+                def calibrate_save(self):
+                    """From the measured calibration data, calculates the calibration coefficients
+                    depending on the selected calibration type.
+                    """
+                    self.__instr_obj.write(f":SENS:CORR:COLL:SAVE")
+                
+                def calibrate_short(self, port:int=1):
+                    """Measures the calibration data of the short standard for the specified port.
+
+                    Args:
+                        port (int, optional): The number of port 1 to 4 (model dependent). Defaults to 1.
+                    """
+                    self.__instr_obj.write(f"SENS:CORR:COLL:OPEN {port}")
+
+                def calibrate_through(self, port:int=1):
+                    """Measures the calibration data of the through standard for the specified port.
+
+                    Args:
+                        port (int, optional): The number of port 1 to 4 (model dependent). Defaults to 1.
+                    """
+                    self.__instr_obj.write(f"SENS:CORR:COLL:THRU {port}")
+
+                class CalKit():
+                    def __init__(self, instrobj):
+                        self.__instr_obj = instrobj
+                        self.__channel = None
+                        self.__trace = None
+                        self.__marker = None
+                        self.__port = None
+                        self.__parameter = None
+                        self.__standard = None
+                        self.__cal_kit = None
+
+                    def _set_channel(self, channel):
+                        self.__channel = channel
+
+                    def _set_trace(self, trace):
+                        self.__trace = trace
+
+                    def _set_marker(self, marker):
+                        self.__marker = marker
+                    
+                    def _set_port(self, port):
+                        self.__port = port
+                    
+                    def _set_parameter(self, parameter):
+                        self.__parameter = parameter
+                    
+                    def _set_standard(self, standard):
+                        self.__standard = standard
+                    
+                    def _set_cal_kit(self, kit):
+                        self.__cal_kit = kit
+
+                    @property
+                    def select(self) -> int:
+                        """Reports the number of the selected calibration kit in the table
+                        of calibration kits. The selected calibration kit is used in the subsequent
+                        calibration and is used for editing by the commands SENS:CORR:COLL:CKIT:XXXX.
+
+                        Returns:
+                            int: Value associated with a defined calibration kit. 
+                        """
+                        return self.__instr_obj.query(f"SENS:CORR:COLL:CKIT?")
+                    
+                    @select.setter
+                    def select(self, kit_number:int=31):
+                        """Sets the number of the selected calibration kit in the table
+                        of calibration kits. The selected calibration kit is used in the subsequent
+                        calibration and is used for editing by the commands SENS:CORR:COLL:CKIT:XXXX.
+
+                        Args:
+                            kit_number (int, optional): Value associated with a defined calibration
+                            kit. Defaults to 31, 'SK-CAL-NSet-90'.
+                        """
+                        self.__instr_obj.write(f"SENS:CORR:COLL:CKIT {kit_number}")
         
         class Frequency():
             """The frequency menu of commands is inclusive of the following:
