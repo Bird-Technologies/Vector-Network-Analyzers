@@ -2266,7 +2266,15 @@ class BirdVectorNetworkAnalyzer():
                 self.__cal_kit = None
 
                 self.collection = self.Collection(self.__instr_obj)
-
+                self.extesion   = self.Extension(self.__instr_obj)
+                self.impedance  = self.Impedance(self.__instr_obj)
+                self.offset     = self.Offset(self.__instr_obj)
+                self.port       = self.Port(self.__instr_obj)
+                self.receiver   = self.Receiver(self.__instr_obj)
+                self.transform  = self.Transform(self.__instr_obj)
+                self.trigger    = self.Trigger(self.__instr_obj)
+                self.vmc        = self.VMC(self.__instr_obj)
+                
             def _set_channel(self, channel):
                 self.__channel = channel
                 self.collection._set_channel(self.__channel)
@@ -2428,7 +2436,463 @@ class BirdVectorNetworkAnalyzer():
                             kit. Defaults to 31, 'SK-CAL-NSet-90'.
                         """
                         self.__instr_obj.write(f"SENS:CORR:COLL:CKIT {kit_number}")
-        
+
+            class Extension():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
+                    self.auto   = self.Auto(self.__instr_obj)
+                    self.port   = self.Port(self.__instr_obj)
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                    self.auto._set_channel(self.__channel)
+                    self.port._set_channel(self.__channel)
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                    self.auto._set_trace(self.__trace)
+                    self.port._set_trace(self.__trace)
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                    self.auto._set_marker(self.__marker)
+                    self.port._set_marker(self.__marker)
+                
+                def _set_port(self, port):
+                    self.__port = port
+                    self.auto._set_port(self.__port)
+                    self.port._set_port(self.__port)
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                    self.auto._set_parameter(self.__parameter)
+                    self.port._set_parameter(self.__parameter)
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                    self.auto._set_standard(self.__standard)
+                    self.port._set_standard(self.__standard)
+                
+                def _set_cal_kit(self, kit):
+                    self.__cal_kit = kit
+                    self.auto._set_cal_kit(self.__cal_kit)
+                    self.port._set_cal_kit(self.__cal_kit)
+
+                class Auto():
+                    def __init__(self, instrobj):
+                        self.__instr_obj = instrobj
+                        self.__channel = None
+                        self.__trace = None
+                        self.__marker = None
+                        self.__port = None
+                        self.__parameter = None
+                        self.__standard = None
+                        self.__cal_kit = None
+
+                    def _set_channel(self, channel):
+                        self.__channel = channel
+
+                    def _set_trace(self, trace):
+                        self.__trace = trace
+
+                    def _set_marker(self, marker):
+                        self.__marker = marker
+                    
+                    def _set_port(self, port):
+                        self.__port = port
+                    
+                    def _set_parameter(self, parameter):
+                        self.__parameter = parameter
+                    
+                    def _set_standard(self, standard):
+                        self.__standard = standard
+                    
+                    def _set_cal_kit(self, kit):
+                        self.__cal_kit = kit
+
+                class Port():
+                    def __init__(self, instrobj):
+                        self.__instr_obj = instrobj
+                        self.__channel = None
+                        self.__trace = None
+                        self.__marker = None
+                        self.__port = None
+                        self.__parameter = None
+                        self.__standard = None
+                        self.__cal_kit = None
+
+                    def _set_channel(self, channel):
+                        self.__channel = channel
+
+                    def _set_trace(self, trace):
+                        self.__trace = trace
+
+                    def _set_marker(self, marker):
+                        self.__marker = marker
+                    
+                    def _set_port(self, port):
+                        self.__port = port
+                    
+                    def _set_parameter(self, parameter):
+                        self.__parameter = parameter
+                    
+                    def _set_standard(self, standard):
+                        self.__standard = standard
+                    
+                    def _set_cal_kit(self, kit):
+                        self.__cal_kit = kit
+
+            class Impedance():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
+                    self.auto   = self.Auto(self.__instr_obj)
+                    self.port   = self.Port(self.__instr_obj)
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                    self.auto._set_channel(self.__channel)
+                    self.port._set_channel(self.__channel)
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                    self.auto._set_trace(self.__trace)
+                    self.port._set_trace(self.__trace)
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                    self.auto._set_marker(self.__marker)
+                    self.port._set_marker(self.__marker)
+                
+                def _set_port(self, port):
+                    self.__port = port
+                    self.auto._set_port(self.__port)
+                    self.port._set_port(self.__port)
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                    self.auto._set_parameter(self.__parameter)
+                    self.port._set_parameter(self.__parameter)
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                    self.auto._set_standard(self.__standard)
+                    self.port._set_standard(self.__standard)
+                
+                def _set_cal_kit(self, kit):
+                    self.__cal_kit = kit
+                    self.auto._set_cal_kit(self.__cal_kit)
+                    self.port._set_cal_kit(self.__cal_kit)
+
+            class Offset():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
+                    #self.auto   = self.Auto(self.__instr_obj)
+                    #self.port   = self.Port(self.__instr_obj)
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                    #self.auto._set_channel(self.__channel)
+                    #self.port._set_channel(self.__channel)
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                    #self.auto._set_trace(self.__trace)
+                    #self.port._set_trace(self.__trace)
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                    #self.auto._set_marker(self.__marker)
+                    #self.port._set_marker(self.__marker)
+                
+                def _set_port(self, port):
+                    self.__port = port
+                    #self.auto._set_port(self.__port)
+                    #self.port._set_port(self.__port)
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                    #self.auto._set_parameter(self.__parameter)
+                    #self.port._set_parameter(self.__parameter)
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                    #self.auto._set_standard(self.__standard)
+                    #self.port._set_standard(self.__standard)
+                
+                def _set_cal_kit(self, kit):
+                    self.__cal_kit = kit
+                    #self.auto._set_cal_kit(self.__cal_kit)
+                    #self.port._set_cal_kit(self.__cal_kit)
+
+            class Port():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
+                    #self.auto   = self.Auto(self.__instr_obj)
+                    #self.port   = self.Port(self.__instr_obj)
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                    #self.auto._set_channel(self.__channel)
+                    #self.port._set_channel(self.__channel)
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                    #self.auto._set_trace(self.__trace)
+                    #self.port._set_trace(self.__trace)
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                    #self.auto._set_marker(self.__marker)
+                    #self.port._set_marker(self.__marker)
+                
+                def _set_port(self, port):
+                    self.__port = port
+                    #self.auto._set_port(self.__port)
+                    #self.port._set_port(self.__port)
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                    #self.auto._set_parameter(self.__parameter)
+                    #self.port._set_parameter(self.__parameter)
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                    #self.auto._set_standard(self.__standard)
+                    #self.port._set_standard(self.__standard)
+                
+                def _set_cal_kit(self, kit):
+                    self.__cal_kit = kit
+                    #self.auto._set_cal_kit(self.__cal_kit)
+                    #self.port._set_cal_kit(self.__cal_kit)
+
+            class Receiver():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
+                    #self.auto   = self.Auto(self.__instr_obj)
+                    #self.port   = self.Port(self.__instr_obj)
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                    #self.auto._set_channel(self.__channel)
+                    #self.port._set_channel(self.__channel)
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                    #self.auto._set_trace(self.__trace)
+                    #self.port._set_trace(self.__trace)
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                    #self.auto._set_marker(self.__marker)
+                    #self.port._set_marker(self.__marker)
+                
+                def _set_port(self, port):
+                    self.__port = port
+                    #self.auto._set_port(self.__port)
+                    #self.port._set_port(self.__port)
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                    #self.auto._set_parameter(self.__parameter)
+                    #self.port._set_parameter(self.__parameter)
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                    #self.auto._set_standard(self.__standard)
+                    #self.port._set_standard(self.__standard)
+                
+                def _set_cal_kit(self, kit):
+                    self.__cal_kit = kit
+                    #self.auto._set_cal_kit(self.__cal_kit)
+                    #self.port._set_cal_kit(self.__cal_kit)
+
+            class Transform():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
+                    #self.auto   = self.Auto(self.__instr_obj)
+                    #self.port   = self.Port(self.__instr_obj)
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                    #self.auto._set_channel(self.__channel)
+                    #self.port._set_channel(self.__channel)
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                    #self.auto._set_trace(self.__trace)
+                    #self.port._set_trace(self.__trace)
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                    #self.auto._set_marker(self.__marker)
+                    #self.port._set_marker(self.__marker)
+                
+                def _set_port(self, port):
+                    self.__port = port
+                    #self.auto._set_port(self.__port)
+                    #self.port._set_port(self.__port)
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                    #self.auto._set_parameter(self.__parameter)
+                    #self.port._set_parameter(self.__parameter)
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                    #self.auto._set_standard(self.__standard)
+                    #self.port._set_standard(self.__standard)
+                
+                def _set_cal_kit(self, kit):
+                    self.__cal_kit = kit
+                    #self.auto._set_cal_kit(self.__cal_kit)
+                    #self.port._set_cal_kit(self.__cal_kit)
+
+            class Trigger():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
+                    #self.auto   = self.Auto(self.__instr_obj)
+                    #self.port   = self.Port(self.__instr_obj)
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                    #self.auto._set_channel(self.__channel)
+                    #self.port._set_channel(self.__channel)
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                    #self.auto._set_trace(self.__trace)
+                    #self.port._set_trace(self.__trace)
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                    #self.auto._set_marker(self.__marker)
+                    #self.port._set_marker(self.__marker)
+                
+                def _set_port(self, port):
+                    self.__port = port
+                    #self.auto._set_port(self.__port)
+                    #self.port._set_port(self.__port)
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                    #self.auto._set_parameter(self.__parameter)
+                    #self.port._set_parameter(self.__parameter)
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                    #self.auto._set_standard(self.__standard)
+                    #self.port._set_standard(self.__standard)
+                
+                def _set_cal_kit(self, kit):
+                    self.__cal_kit = kit
+                    #self.auto._set_cal_kit(self.__cal_kit)
+                    #self.port._set_cal_kit(self.__cal_kit)
+
+            class VMC():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
+                    #self.auto   = self.Auto(self.__instr_obj)
+                    #self.port   = self.Port(self.__instr_obj)
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                    #self.auto._set_channel(self.__channel)
+                    #self.port._set_channel(self.__channel)
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                    #self.auto._set_trace(self.__trace)
+                    #self.port._set_trace(self.__trace)
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                    #self.auto._set_marker(self.__marker)
+                    #self.port._set_marker(self.__marker)
+                
+                def _set_port(self, port):
+                    self.__port = port
+                    #self.auto._set_port(self.__port)
+                    #self.port._set_port(self.__port)
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                    #self.auto._set_parameter(self.__parameter)
+                    #self.port._set_parameter(self.__parameter)
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                    #self.auto._set_standard(self.__standard)
+                    #self.port._set_standard(self.__standard)
+                
+                def _set_cal_kit(self, kit):
+                    self.__cal_kit = kit
+                    #self.auto._set_cal_kit(self.__cal_kit)
+                    #self.port._set_cal_kit(self.__cal_kit)
+
         class Frequency():
             """The frequency menu of commands is inclusive of the following:
                 * center
