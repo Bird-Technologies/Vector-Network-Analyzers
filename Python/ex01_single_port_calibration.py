@@ -36,7 +36,7 @@ from bird_vector_network_analyzer import BirdVectorNetworkAnalyzer
 
 bna1k = BirdVectorNetworkAnalyzer()
 
-# Connect to the instrument and clear out any error conditions
+# Connect to the instrument and clear out any error conditions. 
 bna1k.initialize("TCPIP0::127.0.0.1::inst0::INSTR")
 bna1k.get_error_list()
 
