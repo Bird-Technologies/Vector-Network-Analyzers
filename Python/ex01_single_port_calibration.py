@@ -49,16 +49,26 @@ bna1k.sense.frequency.center = 433e6
 bna1k.sense.frequency.span = 20e6
 bna1k.sense.sweep.points = 1001
 
-# Set the calibration kit to be used and step through connections
+# Identify the cal kit to be used, temporarily disable cal corrections,
+# and set the calibration method that will be used for measurement
+# corrections. 
 bna1k.sense.correction.collection.calkit.select = 1
+bna1k.sense.correction.state = 0
+bna1k.sense.correction.characteristic_impedance = 50.0     # This command is optional
+bna1k.sense.correction.collection.method("1port", 1)
 input("Connect the OPEN standard then enter y to continue.")
 bna1k.sense.correction.collection.calibrate_open(1)
+bna1k.opc_query()
 input("Connect the SHORT standard then enter y to continue.")
 bna1k.sense.correction.collection.calibrate_short(1)
+bna1k.opc_query()
 input("Connect the LOAD standard then enter y to continue.")
 bna1k.sense.correction.collection.calibrate_load(1)
+bna1k.opc_query()
 
 # Save the correction coefficients obtained during cal measurements
 bna1k.sense.correction.collection.calibrate_save()
+
+bna1k.sense.correction.state = 1
 
 bna1k.close()

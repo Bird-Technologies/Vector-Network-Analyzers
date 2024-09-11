@@ -137,6 +137,14 @@ class BirdVectorNetworkAnalyzer():
         """
         self.write("ABOR")
 
+    def opc_query(self):
+        """Reads out the OPC bit (bit 0) of the Standard Event Status Register at the completion of all pending operations.
+        """
+        self.query("*OPC?")
+    
+    def reset(self):
+        self.write("*RST")
+
     def get_error_list(self) -> list[str]:
         fnclst = []
         while True:
@@ -2303,6 +2311,42 @@ class BirdVectorNetworkAnalyzer():
                 self.__cal_kit = kit
                 self.collection._set_cal_kit(self.__cal_kit)
             
+            @property
+            def characteristic_impedance(self) -> float:
+                """This command gets the system characteristic impedance (Z0) value
+
+                Returns:
+                    float: _description_
+                """
+                return self.__instr_obj.query(f"SENS:CORR:IMP?")
+            
+            @characteristic_impedance.setter
+            def characteristic_impedance(self, value:float=50.0):
+                """This command sets the system characteristic impedance (Z0) value
+
+                Args:
+                    value (float, optional): The characteristic impedance value. Defaults to 50.0.
+                """
+                self.__instr_obj.write(f"SENS:CORR:IMP {value}")
+            
+            @property
+            def state(self):
+                """Queries the measurement calibration state.
+
+                Args:
+                    state (int, optional): 0 for OFF; 1 for ON. Defaults to 0.
+                """
+                self.__instr_obj.write(f"SENS:CORR:STAT?")
+
+            @state.setter
+            def state(self, state:int=0):
+                """Enables or disables the measurement calibration state.
+
+                Args:
+                    state (int, optional): 0 for OFF; 1 for ON. Defaults to 0.
+                """
+                self.__instr_obj.write(f"SENS:CORR:STAT {state}")
+            
             class Collection():
                 def __init__(self, instrobj):
                     self.__instr_obj = instrobj
@@ -2372,7 +2416,7 @@ class BirdVectorNetworkAnalyzer():
                     Args:
                         port (int, optional): The number of port 1 to 4 (model dependent). Defaults to 1.
                     """
-                    self.__instr_obj.write(f"SENS:CORR:COLL:OPEN {port}")
+                    self.__instr_obj.write(f"SENS:CORR:COLL:SHOR {port}")
 
                 def calibrate_through(self, port:int=1):
                     """Measures the calibration data of the through standard for the specified port.
@@ -2381,6 +2425,43 @@ class BirdVectorNetworkAnalyzer():
                         port (int, optional): The number of port 1 to 4 (model dependent). Defaults to 1.
                     """
                     self.__instr_obj.write(f"SENS:CORR:COLL:THRU {port}")
+
+                def method(self, method:str='open', porta:int=1, portb:int=2, portc:int=3, portd:int=4):
+                    """Sets the calibration method to be applied upon successful calibration measurements.
+
+                    Args:
+                        method (int, optional): Use "eres" for 2-port enhanced response;\n
+                        "open" for Open;\n
+                        "short" for Short;\n
+                        "thru" for Thru;\n
+                        "1port" for 1-port SOLT;\n
+                        "2port" for 2-port SOLT;\n
+                        "3port" for 3-port SOLT;\n
+                        "4port for 4-port  SOLT.\n
+                        Defaults to 1.
+                        porta (int, optional): The first port used in during calibration. Defaults to 1.
+                        portb (int, optional): The second port used in during calibration. Defaults to 2.
+                        portc (int, optional): The third port used in during calibration. Defaults to 3.
+                        portd (int, optional): The fourth port used in during calibration. Defaults to 4.
+                    """
+                    method_dict = {"eres": "ERES",
+                                   "open": "OPEN",
+                                   "short": "SHORT",
+                                   "thru": "THRU",
+                                   "1port": "SOLT1",
+                                   "2port": "SOLT2",
+                                   "3port": "SOLT3",
+                                   "4port": "SOLT4",
+                                   }
+                    
+                    if (method == 3) or (method == 5) or (method == 0):
+                        self.__instr_obj.write(f"SENS:CORR:COLL:METH:{method_dict[method]} {porta},{portb}")
+                    elif method == 6:
+                        self.__instr_obj.write(f"SENS:CORR:COLL:METH:{method_dict[method]} {porta},{portb},{portc}")
+                    elif method == 7:
+                        self.__instr_obj.write(f"SENS:CORR:COLL:METH:{method_dict[method]} {porta},{portb},{portc},{portd}")
+                    else:
+                        self.__instr_obj.write(f"SENS:CORR:COLL:METH:{method_dict[method]} {porta}")
 
                 class CalKit():
                     def __init__(self, instrobj):
@@ -2561,8 +2642,8 @@ class BirdVectorNetworkAnalyzer():
                     self.__standard = None
                     self.__cal_kit = None
 
-                    self.auto   = self.Auto(self.__instr_obj)
-                    self.port   = self.Port(self.__instr_obj)
+                    #self.auto   = self.Auto(self.__instr_obj)
+                    #self.port   = self.Port(self.__instr_obj)
 
                 def _set_channel(self, channel):
                     self.__channel = channel
