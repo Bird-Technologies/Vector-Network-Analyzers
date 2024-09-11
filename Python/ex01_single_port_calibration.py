@@ -69,6 +69,8 @@ bna1k.opc_query()
 # Save the correction coefficients obtained during cal measurements
 bna1k.sense.correction.collection.calibrate_save()
 
+# Ensure calibration is enabled, but should be by default of successful
+# measurements. 
 bna1k.sense.correction.state = 1
 
 bna1k.close()
