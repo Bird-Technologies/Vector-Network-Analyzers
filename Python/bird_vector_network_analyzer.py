@@ -2231,6 +2231,7 @@ class BirdVectorNetworkAnalyzer():
             self.__channel = channel
             self.correction._set_channel(self.__channel)
             self.frequency._set_channel(self.__channel)
+            self.sweep._set_channel(self.__channel)
 
         def _set_trace(self, trace):
             self.__trace = trace
@@ -2318,7 +2319,7 @@ class BirdVectorNetworkAnalyzer():
                 Returns:
                     float: _description_
                 """
-                return self.__instr_obj.query(f"SENS:CORR:IMP?")
+                return self.__instr_obj.query(f":SENS{self.__channel}:CORR:IMP?")
             
             @characteristic_impedance.setter
             def characteristic_impedance(self, value:float=50.0):
@@ -2327,7 +2328,7 @@ class BirdVectorNetworkAnalyzer():
                 Args:
                     value (float, optional): The characteristic impedance value. Defaults to 50.0.
                 """
-                self.__instr_obj.write(f"SENS:CORR:IMP {value}")
+                self.__instr_obj.write(f":SENS{self.__channel}:CORR:IMP {value}")
             
             @property
             def state(self):
@@ -2336,7 +2337,7 @@ class BirdVectorNetworkAnalyzer():
                 Args:
                     state (int, optional): 0 for OFF; 1 for ON. Defaults to 0.
                 """
-                self.__instr_obj.write(f"SENS:CORR:STAT?")
+                self.__instr_obj.write(f":SENS{self.__channel}:CORR:STAT?")
 
             @state.setter
             def state(self, state:int=0):
@@ -2345,7 +2346,7 @@ class BirdVectorNetworkAnalyzer():
                 Args:
                     state (int, optional): 0 for OFF; 1 for ON. Defaults to 0.
                 """
-                self.__instr_obj.write(f"SENS:CORR:STAT {state}")
+                self.__instr_obj.write(f":SENS{self.__channel}:CORR:STAT {state}")
             
             class Collection():
                 def __init__(self, instrobj):
@@ -2394,7 +2395,7 @@ class BirdVectorNetworkAnalyzer():
                     Args:
                         port (int, optional): The number of port 1 to 4 (model dependent). Defaults to 1.
                     """
-                    self.__instr_obj.write(f"SENS:CORR:COLL:LOAD {port}")
+                    self.__instr_obj.write(f"SENS{self.__channel}:CORR:COLL:LOAD {port}")
 
                 def calibrate_open(self, port:int=1):
                     """Measures the calibration data of the open standard for the specified port.
@@ -2402,13 +2403,13 @@ class BirdVectorNetworkAnalyzer():
                     Args:
                         port (int, optional): The number of port 1 to 4 (model dependent). Defaults to 1.
                     """
-                    self.__instr_obj.write(f"SENS:CORR:COLL:OPEN {port}")
+                    self.__instr_obj.write(f"SENS{self.__channel}:CORR:COLL:OPEN {port}")
                 
                 def calibrate_save(self):
                     """From the measured calibration data, calculates the calibration coefficients
                     depending on the selected calibration type.
                     """
-                    self.__instr_obj.write(f":SENS:CORR:COLL:SAVE")
+                    self.__instr_obj.write(f":SENS{self.__channel}:CORR:COLL:SAVE")
                 
                 def calibrate_short(self, port:int=1):
                     """Measures the calibration data of the short standard for the specified port.
@@ -2416,15 +2417,15 @@ class BirdVectorNetworkAnalyzer():
                     Args:
                         port (int, optional): The number of port 1 to 4 (model dependent). Defaults to 1.
                     """
-                    self.__instr_obj.write(f"SENS:CORR:COLL:SHOR {port}")
+                    self.__instr_obj.write(f":SENS{self.__channel}:CORR:COLL:SHOR {port}")
 
-                def calibrate_through(self, port:int=1):
+                def calibrate_through(self, porta:int=1, portb:int=2):
                     """Measures the calibration data of the through standard for the specified port.
 
                     Args:
                         port (int, optional): The number of port 1 to 4 (model dependent). Defaults to 1.
                     """
-                    self.__instr_obj.write(f"SENS:CORR:COLL:THRU {port}")
+                    self.__instr_obj.write(f":SENS{self.__channel}:CORR:COLL:THRU {porta},{portb}")
 
                 def method(self, method:str='open', porta:int=1, portb:int=2, portc:int=3, portd:int=4):
                     """Sets the calibration method to be applied upon successful calibration measurements.
@@ -2454,14 +2455,14 @@ class BirdVectorNetworkAnalyzer():
                                    "4port": "SOLT4",
                                    }
                     
-                    if (method == 3) or (method == 5) or (method == 0):
-                        self.__instr_obj.write(f"SENS:CORR:COLL:METH:{method_dict[method]} {porta},{portb}")
-                    elif method == 6:
-                        self.__instr_obj.write(f"SENS:CORR:COLL:METH:{method_dict[method]} {porta},{portb},{portc}")
-                    elif method == 7:
-                        self.__instr_obj.write(f"SENS:CORR:COLL:METH:{method_dict[method]} {porta},{portb},{portc},{portd}")
+                    if (method == "thru") or (method == "2port") or (method == "eres"):
+                        self.__instr_obj.write(f"SENS{self.__channel}:CORR:COLL:METH:{method_dict[method]} {porta},{portb}")
+                    elif method == "3port":
+                        self.__instr_obj.write(f"SENS{self.__channel}:CORR:COLL:METH:{method_dict[method]} {porta},{portb},{portc}")
+                    elif method == "4port":
+                        self.__instr_obj.write(f"SENS{self.__channel}:CORR:COLL:METH:{method_dict[method]} {porta},{portb},{portc},{portd}")
                     else:
-                        self.__instr_obj.write(f"SENS:CORR:COLL:METH:{method_dict[method]} {porta}")
+                        self.__instr_obj.write(f"SENS{self.__channel}:CORR:COLL:METH:{method_dict[method]} {porta}")
 
                 class CalKit():
                     def __init__(self, instrobj):
@@ -2504,7 +2505,7 @@ class BirdVectorNetworkAnalyzer():
                         Returns:
                             int: Value associated with a defined calibration kit. 
                         """
-                        return self.__instr_obj.query(f"SENS:CORR:COLL:CKIT?")
+                        return self.__instr_obj.query(f":SENS{self.__channel}:CORR:COLL:CKIT?")
                     
                     @select.setter
                     def select(self, kit_number:int=31):
@@ -2516,7 +2517,7 @@ class BirdVectorNetworkAnalyzer():
                             kit_number (int, optional): Value associated with a defined calibration
                             kit. Defaults to 31, 'SK-CAL-NSet-90'.
                         """
-                        self.__instr_obj.write(f"SENS:CORR:COLL:CKIT {kit_number}")
+                        self.__instr_obj.write(f":SENS{self.__channel}:CORR:COLL:CKIT {kit_number}")
 
             class Extension():
                 def __init__(self, instrobj):
@@ -3042,7 +3043,7 @@ class BirdVectorNetworkAnalyzer():
                 Returns:
                     list[int]: <numeric 1>, <numeric 2>, …<numeric N>
                 """
-                mystr = self.__instr_obj.query(f"SENS{self.__channel}:FREQ:DATA?").rstrip()
+                mystr = self.__instr_obj.query(f":SENS{self.__channel}:FREQ:DATA?").rstrip()
                 my_list = mystr.split(',')
                 return my_list
             
@@ -3053,7 +3054,7 @@ class BirdVectorNetworkAnalyzer():
                 Returns:
                     float: The center frequency in Hertz (Hz).
                 """
-                return float(self.__instr_obj.query(f"SENS{self.__channel}:FREQ:CENT?").rstrip())
+                return float(self.__instr_obj.query(f":SENS{self.__channel}:FREQ:CENT?").rstrip())
             
             @center.setter
             def center(self, frequency:float):
@@ -3062,7 +3063,7 @@ class BirdVectorNetworkAnalyzer():
                 Args:
                     frequency (float): The center frequency in Hertz (Hz).
                 """
-                self.__instr_obj.write(f"SENS{self.__channel}:FREQ:CENT {frequency}")
+                self.__instr_obj.write(f":SENS{self.__channel}:FREQ:CENT {frequency}")
 
             @property
             def span(self) -> float:
@@ -3071,7 +3072,7 @@ class BirdVectorNetworkAnalyzer():
                 Returns:
                     float: The frequency span in Hertz (Hz).
                 """
-                return float(self.__instr_obj.query(f"SENS{self.__channel}:FREQ:SPAN?").rstrip())
+                return float(self.__instr_obj.query(f":SENS{self.__channel}:FREQ:SPAN?").rstrip())
             
             @span.setter
             def span(self, frequency:float):
@@ -3157,7 +3158,7 @@ class BirdVectorNetworkAnalyzer():
                 Returns:
                     int: Number of measurement points.
                 """
-                return int(self.__instr_obj.query(f"SENS{self.__channel}:SWE:POIN?").rstrip())
+                return int(self.__instr_obj.query(f":SENS{self.__channel}:SWE:POIN?").rstrip())
 
             @points.setter
             def points(self, count:int):
@@ -3166,7 +3167,7 @@ class BirdVectorNetworkAnalyzer():
                 Args:
                     count (int): Number of measurement points. 
                 """
-                self.__instr_obj.write(f"SENS{self.__channel}:SWE:POIN {count}")  
+                self.__instr_obj.write(f":SENS{self.__channel}:SWE:POIN {count}")  
 
             @property
             def point_time(self) -> float:
