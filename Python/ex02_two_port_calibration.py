@@ -29,7 +29,7 @@ SOFTWARE.
 
 @endverbatim
 
-@file ex01_single_port_calibration.py
+@file ex02_two_port_calibration.py
  
 """
 from bird_vector_network_analyzer import BirdVectorNetworkAnalyzer
