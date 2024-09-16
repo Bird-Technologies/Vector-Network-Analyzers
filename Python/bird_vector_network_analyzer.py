@@ -2275,7 +2275,7 @@ class BirdVectorNetworkAnalyzer():
                 self.__cal_kit = None
 
                 self.collection = self.Collection(self.__instr_obj)
-                self.extesion   = self.Extension(self.__instr_obj)
+                self.extension   = self.Extension(self.__instr_obj)
                 self.impedance  = self.Impedance(self.__instr_obj)
                 self.offset     = self.Offset(self.__instr_obj)
                 self.port       = self.Port(self.__instr_obj)
@@ -2287,30 +2287,37 @@ class BirdVectorNetworkAnalyzer():
             def _set_channel(self, channel):
                 self.__channel = channel
                 self.collection._set_channel(self.__channel)
+                self.extension._set_channel(self.__channel)
 
             def _set_trace(self, trace):
                 self.__trace = trace
                 self.collection._set_trace(self.__trace)
+                self.extension._set_trace(self.__trace)
 
             def _set_marker(self, marker):
                 self.__marker = marker
                 self.collection._set_marker(self.__marker)
+                self.extension._set_marker(self.__marker)
             
             def _set_port(self, port):
                 self.__port = port
                 self.collection._set_port(self.__port)
+                self.extension._set_port(self.__port)
             
             def _set_parameter(self, parameter):
                 self.__parameter = parameter
                 self.collection._set_parameter(self.__parameter)
+                self.extension._set_parameter(self.__parameter)
             
             def _set_standard(self, standard):
                 self.__standard = standard
                 self.collection._set_standard(self.__standard)
+                self.extension._set_standard(self.__standard)
             
             def _set_cal_kit(self, kit):
                 self.__cal_kit = kit
                 self.collection._set_cal_kit(self.__cal_kit)
+                self.extension._set_cal_kit(self.__cal_kit)
             
             @property
             def characteristic_impedance(self) -> float:
@@ -2347,6 +2354,7 @@ class BirdVectorNetworkAnalyzer():
                     state (int, optional): 0 for OFF; 1 for ON. Defaults to 0.
                 """
                 self.__instr_obj.write(f":SENS{self.__channel}:CORR:STAT {state}")
+            
             
             class Collection():
                 def __init__(self, instrobj):
@@ -2581,7 +2589,7 @@ class BirdVectorNetworkAnalyzer():
 
                     def _set_channel(self, channel):
                         self.__channel = channel
-
+                        
                     def _set_trace(self, trace):
                         self.__trace = trace
 
@@ -2599,6 +2607,32 @@ class BirdVectorNetworkAnalyzer():
                     
                     def _set_cal_kit(self, kit):
                         self.__cal_kit = kit
+                    
+                    def measure(self, meastype:str="open"):
+                        """Performs the port extention auto measurement for the 
+
+                        Args:
+                            meastype (str, optional): _description_. Defaults to "open".
+                        """
+                        self.__instr_obj.write(f":SENS{self.__channel}:CORR:EXT:AUTO:MEAS {meastype.upper()}")
+
+                    @property
+                    def port(self) -> str:
+                        """Indicates whether the port is enabled for the port extension measurement (ON|1), or disabled (OFF|0).
+
+                        Returns:
+                            str: Enabled (ON|1), or disabled (OFF|0).
+                        """
+                        self.__instr_obj.write(f":SENS{self.__channel}:CORR:EXT:AUTO:PORT{self.__port}?")
+
+                    @port.setter
+                    def port(self, state:str="off"):
+                        """Sets the port is enabled for the port extension measurement (ON|1), or disabled (OFF|0).
+
+                        Args:
+                            state (str, optional): Pass "on" to enable or "off" to disable. Defaults to "off".
+                        """
+                        self.__instr_obj.write(f":SENS{self.__channel}:CORR:EXT:AUTO:PORT{self.__port} {state.upper()}")
 
                 class Port():
                     def __init__(self, instrobj):
