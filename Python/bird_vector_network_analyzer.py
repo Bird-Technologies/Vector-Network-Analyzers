@@ -1934,6 +1934,18 @@ class BirdVectorNetworkAnalyzer():
                 """
                 self.__instr_obj.write(f":CALC{self.__channel}:MARK{self.__marker} {state}")
 
+            @property
+            def x(self) -> float:
+                return self.__instr_obj.query(f":CALC{self.__channel}:MARK{self.__marker}:X?")
+            
+            @x.setter
+            def x(self, frequency:float=500e6):
+                self.__instr_obj.write(f":CALC{self.__channel}:MARK{self.__marker}:X {frequency}")
+
+            def y(self) -> tuple[float, float]:
+                temp1, temp2 = self.__instr_obj.query(f":CALC{self.__channel}:MARK{self.__marker}:Y?").rstrip().split(',')
+                return float(temp1), float(temp2)
+
         class Math():
             def __init__(self, instrobj):
                 self.__instr_obj = instrobj
