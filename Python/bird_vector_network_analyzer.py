@@ -353,7 +353,20 @@ class BirdVectorNetworkAnalyzer():
         def _set_marker(self, marker):
             self.__marker = marker
             self.conversion._set_marker(self.__marker)
-        
+            self.data._set_marker(self.__marker)
+            self.format._set_marker(self.__marker)
+            self.fixturesimulate._set_marker(self.__marker)
+            self.function._set_marker(self.__marker)
+            self.hold._set_marker(self.__marker)
+            self.limit._set_marker(self.__marker)
+            self.marker._set_marker(self.__marker)
+            self.math._set_marker(self.__marker)
+            self.mathstatistics._set_marker(self.__marker)
+            self.parameter._set_marker(self.__marker)
+            self.ripplelimit._set_marker(self.__marker)
+            self.smoothing._set_marker(self.__marker)
+            self.transform._set_marker(self.__marker)
+
         def _set_port(self, port):
             self.__port = port
             self.conversion._set_port(self.__port)
@@ -1830,26 +1843,96 @@ class BirdVectorNetworkAnalyzer():
                 self.__standard = None
                 self.__cal_kit = None
 
+                self.function = self.Function(self.__instr_obj)
+
             def _set_channel(self, channel):
                 self.__channel = channel
+                self.function._set_channel(self.__channel)
             
             def _set_trace(self, trace):
                 self.__trace = trace
+                self.function._set_trace(self.__trace)
 
             def _set_marker(self, marker):
                 self.__marker = marker
+                self.function._set_marker(self.__marker)
             
             def _set_port(self, port):
                 self.__port = port
+                self.function._set_port(self.__port)
             
             def _set_parameter(self, parameter):
                 self.__parameter = parameter
+                self.function._set_parameter(self.__parameter)
             
             def _set_standard(self, standard):
                 self.__standard = standard
+                self.function._set_standard(self.__standard)
             
             def _set_cal_kit(self, kit):
                 self.__cal_kit = kit
+            
+            class Function():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                
+                def _set_trace(self, trace):
+                    self.__trace = trace
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                
+                def _set_port(self, port):
+                    self.__port = port
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+            
+            def set(self, location:str="center"):
+                """For the active trace of a select channel, sets the position value of the marker to the x-axis location specified. These are the quick options when a specific frequency is not applied.
+
+                Args:
+                    location (str, optional): Available options are 'start', 'stop', 'center', 'ref_level', 'delay', 'ref_marker', and 'span'. Defaults to "center".
+                """
+                location_dict = {"start": "STAR",
+                                 "stop": "STOP",
+                                 "center": "CENT",
+                                 "ref_level": "RLEV",
+                                 "delay": "DEL",
+                                 "ref_marker": "RMAR",
+                                 "span": "SPAN",
+                                }
+                self.__instr_obj.write(f":CALC{self.__channel}:MARK{self.__marker}:SET {location_dict[location]}") 
+
+            @property
+            def state(self) -> int:
+                """For the active trace of a select channel, reports the state.
+
+                Returns:
+                    int: Either 1 for ON or 0 for OFF.
+                """
+                return self.__instr_obj.query(f":CALC{self.__channel}:MARK{self.__marker}?")
+            
+            @state.setter
+            def state(self, state:int=1):
+                """For the active trace of a select channel, turns on/off marker.
+
+                Args:
+                    state (int, optional): Either 1 for ON or 0 for OFF. Defaults to 1.
+                """
+                self.__instr_obj.write(f":CALC{self.__channel}:MARK{self.__marker} {state}")
 
         class Math():
             def __init__(self, instrobj):
