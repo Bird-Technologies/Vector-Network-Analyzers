@@ -89,10 +89,12 @@ val1, val2 = bna1k.calculate.marker.y()
 bna1k.marker = 2
 bna1k.calculate.marker.state = 1
 bna1k.calculate.marker.x = 824e6
+val1, val2 = bna1k.calculate.marker.y()
 
 bna1k.marker = 3
 bna1k.calculate.marker.state = 1
 bna1k.calculate.marker.x = 900e6
+val1, val2 = bna1k.calculate.marker.y()
 
 # Add a second trace in the same channel to display VSWR, 
 # make it active, and use the same markers to help print
@@ -105,23 +107,34 @@ bna1k.calculate.parameter.trace_sparam = "s11"
 bna1k.calculate.format.type = "swr"
 bna1k.display.window.trace.y.autoscale()
 
+bna1k.marker = 1
+val1, val2 = bna1k.calculate.marker.y()
+
+bna1k.marker = 2
+val1, val2 = bna1k.calculate.marker.y()
+
+bna1k.marker = 3
+val1, val2 = bna1k.calculate.marker.y()
+
 # Add a third trace and allocate it in a different pane, 
 # make it active, measure the impedance values on the 
 # Smith chart. Print the marker data to the console. 
+bna1k.calculate.parameter.tracecount = 3
+bna1k.trace = 3
+bna1k.calculate.parameter.traceselect = bna1k.trace
+bna1k.display.window.layout = 4
+bna1k.display.window.maximize = 1
+bna1k.calculate.format.type = "smit"
+bna1k.display.window.trace.y.autoscale()
 
+bna1k.marker = 1
+val1, val2 = bna1k.calculate.marker.y()
 
-# Next
+bna1k.marker = 2
+val1, val2 = bna1k.calculate.marker.y()
 
-# Set the calibration kit to be used 
-bna1k.sense.correction.collection.calkit.select = 1
-input("Connect the OPEN standard then enter y to continue.")
-bna1k.sense.correction.collection.calibrate_open(1)
-input("Connect the SHORT standard then enter y to continue.")
-bna1k.sense.correction.collection.calibrate_short(1)
-input("Connect the LOAD standard then enter y to continue.")
-bna1k.sense.correction.collection.calibrate_load(1)
-
-bna1k.sense.correction.collection.calibrate_save()
+bna1k.marker = 3
+val1, val2 = bna1k.calculate.marker.y()
 
 bna1k.close()
 
