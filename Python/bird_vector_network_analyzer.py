@@ -993,16 +993,16 @@ class BirdVectorNetworkAnalyzer():
                 Returns:
                     str: Returned format type of MLOG, PHAS, GDEL, SLIN, SLOG, SCOM, SMIT, SADM, PLIN, PLOG, POL, MLIN, SWR, REAL, IMAG or UPH.
                 """
-                return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}>:FORMat?")
+                return self.__instr_obj.query(f"CALC{self.__channel}:TRAC{self.__trace}>:FORMat?").rstrip().lower()
             
             @type.setter
-            def type(self, type:str="MLOG"):
+            def type(self, type:str="mlog"):
                 """This command sets the data format of the active trace of a select channel.
 
                 Args:
                     type (str, optional): Use one of the following - MLOGarithmic, PHASe, GDELay, SLINear, SLOGarithmic, SCOMplex, SMITh, SADMittance, PLINear, PLOGarithmic, POLar, MLINear, SWR, REAL, IMAGinary, UPHase. Defaults to "MLOG".
                 """
-                self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:FORMat {type}")
+                self.__instr_obj.write(f"CALC{self.__channel}:TRAC{self.__trace}:FORMat {type.upper()}")
 
         class FixtureSimulate():
             def __init__(self, instrobj):
@@ -1947,6 +1947,60 @@ class BirdVectorNetworkAnalyzer():
             def _set_cal_kit(self, kit):
                 self.__cal_kit = kit
 
+            @property
+            def tracecount(self) -> int:
+                """Gets the number of traces available for the active channel.
+
+                Returns:
+                    int: Number of traces.
+                """
+                return self.__instr_obj.query(f":CALC{self.__channel}:PAR:COUN?")
+
+            @tracecount.setter
+            def tracecount(self, count:int=1):
+                """Sets the number of traces available for teh active channel.
+
+                Args:
+                    count (int, optional): The number of traces for the channel to use. Defaults to 1.
+                """
+                self.__instr_obj.write(f":CALC{self.__channel}:PAR:COUN {count}")
+
+            @property
+            def traceselect(self) -> int:
+                """Gets the active trace within the active channel.
+
+                Returns:
+                    int: The trace number of interest.
+                """
+                return self.__instr_obj.query(f":CALC{self.__channel}:PAR{self.__trace}:SEL?")
+            
+            @traceselect.setter
+            def traceselect(self, activetrace:int=1):
+                """Sets the active trace within the active channel.
+
+                Args:
+                    activetrace (int, optional): _description_. Defaults to 1.
+                """
+                self.__instr_obj.write(f":CALC{self.__channel}:PAR{activetrace}:SEL")
+
+            @property
+            def trace_sparam(self) -> str:
+                """Gets the measurement scattering parameters of the select trace of a select channel.
+
+                Returns:
+                    str: Model/port count depended. Examples: "s11", "s22", "s12", "s21", "s13", etc. 
+                """
+                return self.__instr_obj.query(f":CALC{self.__channel}:PAR{self.__trace}:DEF?").rstrip()
+            
+            @trace_sparam.setter
+            def trace_sparam(self, sparam:str="s11"):
+                """Sets the measurement scattering parameters for the select trace of a select channel.
+
+                Args:
+                    sparam (str, optional): Model, port count dependent. Options include "s11", "s22", "s12", "s21", "s13", etc.  Defaults to "s11".
+                """
+                self.__instr_obj.write(f":CALC{self.__channel}:PAR{self.__trace}:DEF {sparam.upper()}")
+
         class RippleLimit():
             def __init__(self, instrobj):
                 self.__instr_obj = instrobj
@@ -2055,17 +2109,28 @@ class BirdVectorNetworkAnalyzer():
             self.__standard = None
             self.__cal_kit = None
 
+            self.color = self.Color(self.__instr_obj)
+            self.window = self.Window(self.__instr_obj)
+
         def _set_channel(self, channel):
             self.__channel = channel
+            self.color._set_channel(self.__channel)
+            self.window._set_channel(self.__channel)
 
         def _set_trace(self, trace):
             self.__trace = trace
+            self.color._set_trace(self.__trace)
+            self.window._set_trace(self.__trace)
         
         def _set_marker(self, marker):
             self.__marker = marker
+            self.color._set_marker(self.__marker)
+            self.window._set_marker(self.__marker)
         
         def _set_port(self, port):
             self.__port = port
+            self.color._set_port(self.__port)
+            self.window._set_port(self.__port)
         
         def _set_parameter(self, parameter):
             self.__parameter = parameter
@@ -2075,7 +2140,154 @@ class BirdVectorNetworkAnalyzer():
         
         def _set_cal_kit(self, kit):
             self.__cal_kit = kit
-    
+
+        class Color():
+            def __init__(self, instrobj):
+                self.__instr_obj = instrobj
+                self.__channel = None
+                self.__trace = None
+                self.__marker = None
+                self.__port = None
+                self.__parameter = None
+                self.__standard = None
+
+                self.trace = self.Trace(self.__instr_obj)
+
+            def _set_channel(self, channel):
+                self.__channel = channel
+                self.trace._set_channel(self.__channel)
+
+            def _set_trace(self, trace):
+                self.__trace = trace
+                self.trace._set_trace(self.__trace)
+            
+            def _set_marker(self, marker):
+                self.__marker = marker
+                self.trace._set_marker(self.__marker)
+            
+            def _set_port(self, port):
+                self.__port = port
+                self.trace._set_port(self.__port)
+
+            def reset(self):
+                """
+                This command resets the display color settings for all the items to the factory preset state, for normal display.
+                """
+                self.__instr_obj.write(f":DISP:COL:RES")
+
+            class Trace():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                
+                def _set_channel(self, channel):
+                    self.__channel = channel
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                
+                def _set_port(self, port):
+                    self.__port = port
+
+                def data(self, red:int=128, green:int=128, blue:int=128):
+                    self.__instr_obj.write(f":DISP:COL:TRAC:DATA {red},{green},{blue}")  
+
+                def memory(self, red:int=128, green:int=128, blue:int=128):
+                    self.__instr_obj.write(f":DISP:COL:TRAC:MEM {red},{green},{blue}")  
+
+        class Window():
+            def __init__(self, instrobj):
+                self.__instr_obj = instrobj
+                self.__channel = None
+                self.__trace = None
+                self.__marker = None
+                self.__port = None
+
+                self.trace = self.Trace(self.__instr_obj)
+            
+            def _set_channel(self, channel):
+                self.__channel = channel
+                self.trace._set_channel(self.__channel)
+
+            def _set_trace(self, trace):
+                self.__trace = trace
+                self.trace._set_trace(self.__trace)
+            
+            def _set_marker(self, marker):
+                self.__marker = marker
+                self.trace._set_marker(self.__marker)
+            
+            def _set_port(self, port):
+                self.__port = port
+                self.trace._set_port(self.__port)
+            
+            class Trace():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+
+                    self.y = self.Y(self.__instr_obj)
+                
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                    self.y._set_channel(self.__channel)
+
+                def _set_trace(self, trace):
+                    self.__trace = trace
+                    self.y._set_trace(self.__trace)
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                    self.y._set_marker(self.__marker)
+                
+                def _set_port(self, port):
+                    self.__port = port
+                    self.y._set_port(self.__port)
+                
+                class Y():
+                    def __init__(self, instrobj):
+                        self.__instr_obj = instrobj
+                        self.__channel = None
+                        self.__trace = None
+                        self.__marker = None
+                        self.__port = None
+                    
+                    def _set_channel(self, channel):
+                        self.__channel = channel
+
+                    def _set_trace(self, trace):
+                        self.__trace = trace
+                    
+                    def _set_marker(self, marker):
+                        self.__marker = marker
+                    
+                    def _set_port(self, port):
+                        self.__port = port
+
+                    def autoscale(self):
+                        """For a select trace of a select channel, executes the auto scale (function to
+                            automatically adjust the value of the reference graticule and the scale per
+                            division to display t he trace appropriately).
+                        """
+                        self.__instr_obj.write(f"DISP:WIND{self.__channel}:TRAC{self.__trace}:Y:AUTO")
+
+        @property
+        def enable(self) -> int:
+            self.__instr_obj.write(f":DISP:ENAB?")  
+        
+        @enable.setter
+        def enable(self, state:str="on"):
+            self.__instr_obj.write(f":DISP:ENAB {state}")
+
     class Format():
         def __init__(self, instrobj):
             self.__instr_obj = instrobj
