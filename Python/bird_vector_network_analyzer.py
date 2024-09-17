@@ -1936,13 +1936,28 @@ class BirdVectorNetworkAnalyzer():
 
             @property
             def x(self) -> float:
+                """For the active trace of a select channel, gets the stimulus value of marker 1 to marker 15 or reference marker.
+
+                Returns:
+                    float: Frequency of the active marker in Hz. 
+                """
                 return self.__instr_obj.query(f":CALC{self.__channel}:MARK{self.__marker}:X?")
             
             @x.setter
             def x(self, frequency:float=500e6):
+                """For the active trace of a select channel, sets the stimulus value of marker 1 to marker 15 or reference marker.
+
+                Args:
+                    frequency (float, optional): Frequency of the active marker in Hz. Defaults to 500e6.
+                """
                 self.__instr_obj.write(f":CALC{self.__channel}:MARK{self.__marker}:X {frequency}")
 
             def y(self) -> tuple[float, float]:
+                """For the active trace of a select channel, reads out the response value of marker 1 to marker 15 or reference marker.
+
+                Returns:
+                    tuple[float, float]: Two values may be given. The primary response value and the secondary value at the marker position. The secondary value is always 0 when the data format is not set to Smith chart or the polar.
+                """
                 temp1, temp2 = self.__instr_obj.query(f":CALC{self.__channel}:MARK{self.__marker}:Y?").rstrip().split(',')
                 return float(temp1), float(temp2)
 
@@ -2322,6 +2337,83 @@ class BirdVectorNetworkAnalyzer():
                 self.__port = port
                 self.trace._set_port(self.__port)
             
+            @property
+            def layout(self) -> int:
+                """Gets the graph layout of a select channel. Layout options follow the convention such that grouped numbers fall into the same column and numbers separated by an underscore character represent a new row. Options include: \n
+                \t1 - D1: Single pane\n
+                \t2 - D12: Two panes side-by-side\n
+                \t3 - D1_2: Two panes, one on top of the other\n
+                \t4 - D123: Three panes side-by-side\n
+                \t5 - D1_2_3: Three panes vertically stacked\n
+                \t6 - D11_23: First row has the single large pane, two smaller panes in a row just beneath\n
+                \t7 - D12_34: Two rows, each with two panes\n
+                \t8 - D1_2_3_4: Four rows of one pane each, stacked\n
+                \t9 - D123_456: Two rows, each with three panes\n
+                \t10 - D12_34_56: Three rows, each with two panes\n
+                \t11 - D1234_5678: Two rows, each with four panes\n
+                \t12 - D123_456_789: Three rows, each with three panes\n
+                \t13 - D1234_5678_9ABC: Three rows, each with four panes\n
+                \t14 - D123_456_789_ABC: Four rows, each with three panes\n
+                \t15 - D1234__CDEF: Four rows, each with four panes\n\n
+
+                Consult the programmer's manual for visual examples of each. 
+
+                Returns:
+                    int: Channel layout pattern.
+                """
+                return self.__instr_obj.query(f":DISP:WIND{self.__channel}:SPL?")
+
+            @layout.setter
+            def layout(self, arrangement:int=1):
+                """Sets the graph layout of a select channel. Layout options follow the convention such that grouped numbers fall into the same column and numbers separated by an underscore character represent a new row. Options include: \n
+                \t1 - D1: Single pane\n
+                \t2 - D12: Two panes side-by-side\n
+                \t3 - D1_2: Two panes, one on top of the other\n
+                \t4 - D123: Three panes side-by-side\n
+                \t5 - D1_2_3: Three panes vertically stacked\n
+                \t6 - D11_23: First row has the single large pane, two smaller panes in a row just beneath\n
+                \t7 - D12_34: Two rows, each with two panes\n
+                \t8 - D1_2_3_4: Four rows of one pane each, stacked\n
+                \t9 - D123_456: Two rows, each with three panes\n
+                \t10 - D12_34_56: Three rows, each with two panes\n
+                \t11 - D1234_5678: Two rows, each with four panes\n
+                \t12 - D123_456_789: Three rows, each with three panes\n
+                \t13 - D1234_5678_9ABC: Three rows, each with four panes\n
+                \t14 - D123_456_789_ABC: Four rows, each with three panes\n
+                \t15 - D1234__CDEF: Four rows, each with four panes\n\n
+
+                Consult the programmer's manual for visual examples of each. 
+
+                Args:
+                    arrangement (int, optional): The layout selection. Defaults to 1.
+                """
+                layout_dict = {'1': "D1",
+                               '2': "D12",
+                               '3': "D1_2", 
+                               '4': "D123",
+                               '5': "D1_2_3",
+                               '6': "D11_23", 
+                               '7': "D12_34",
+                               '8': "D1_2_3_4",
+                               '9': "D123_456",
+                               '10': "D12_34_56",
+                               '11': "D1234_5678",
+                               '12': "D123_456_789",
+                               '13': "D1234_5678_9ABC",
+                               '14': "D123_456_789_ABC",
+                               '15': "D1234__CDEF",
+                            }
+                
+                self.__instr_obj.write(f":DISP:WIND{self.__channel}:SPL {layout_dict[str(arrangement)]}")
+
+            @property
+            def maximize(self) -> int:
+                return self.__instr_obj.query(f":DISP:WIND{self.__channel}:MAX?")
+            
+            @maximize.setter
+            def maximize(self, state:int=0):
+                self.__instr_obj.write(f":DISP:WIND{self.__channel}:MAX {state}")
+
             class Trace():
                 def __init__(self, instrobj):
                     self.__instr_obj = instrobj
