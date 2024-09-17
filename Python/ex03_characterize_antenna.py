@@ -72,12 +72,24 @@ bna1k.sense.correction.extension.auto.measure("open")
 # interest: both -10 dB points at either side of the band of
 # interest as well as one at the lowest point. Get the marker
 # data and print to the console. 
-bna1k.
+bna1k.calculate.parameter.tracecount = 1
+bna1k.calculate.parameter.traceselect = 1
+temp = bna1k.calculate.parameter.trace_sparam
+bna1k.calculate.parameter.trace_sparam = "s11"
+print(bna1k.calculate.format.type)
+bna1k.calculate.format.type = "mlog"
+bna1k.display.window.trace.y.autoscale()
 
 # Add a second trace in the same channel to display VSWR, 
 # make it active, and use the same markers to help print
 # data to the console. 
-
+bna1k.calculate.parameter.tracecount = 2
+bna1k.trace = 2
+bna1k.calculate.parameter.traceselect = bna1k.trace
+temp = bna1k.calculate.parameter.trace_sparam
+bna1k.calculate.parameter.trace_sparam = "s11"
+bna1k.calculate.format.type = "swr"
+bna1k.display.window.trace.y.autoscale()
 
 # Add a third trace and allocate it in a different pane, 
 # make it active, measure the impedance values on the 
