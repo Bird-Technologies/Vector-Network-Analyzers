@@ -79,10 +79,20 @@ bna1k.calculate.parameter.trace_sparam = "s11"
 print(bna1k.calculate.format.type)
 bna1k.calculate.format.type = "mlog"
 bna1k.display.window.trace.y.autoscale()
+
 bna1k.marker = 1
 print(bna1k.calculate.marker.state)
 bna1k.calculate.marker.state = 1
 bna1k.calculate.marker.set("center")
+val1, val2 = bna1k.calculate.marker.y()
+
+bna1k.marker = 2
+bna1k.calculate.marker.state = 1
+bna1k.calculate.marker.x = 824e6
+
+bna1k.marker = 3
+bna1k.calculate.marker.state = 1
+bna1k.calculate.marker.x = 900e6
 
 # Add a second trace in the same channel to display VSWR, 
 # make it active, and use the same markers to help print
