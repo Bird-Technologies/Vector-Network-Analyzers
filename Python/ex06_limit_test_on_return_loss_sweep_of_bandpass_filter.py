@@ -82,6 +82,7 @@ val1, val2 = bna1k.calculate.marker.y()
 
 bna1k.marker = 2
 bna1k.calculate.marker.state = 1
+# Set up for a marker search by target on the left side of the center frequency
 bna1k.calculate.marker.x = 423e6
 bna1k.calculate.marker.function.searchtype = 'target'
 bna1k.calculate.marker.function.searchtarget = -16.5
@@ -91,6 +92,7 @@ val1, val2 = bna1k.calculate.marker.y()
 
 bna1k.marker = 3
 bna1k.calculate.marker.state = 1
+# Set up for a marker search by target on the right side of the center frequency
 bna1k.calculate.marker.x = 443e6
 bna1k.calculate.marker.function.searchtype = 'target'
 bna1k.calculate.marker.function.searchtarget = -16.5
@@ -101,14 +103,17 @@ val1, val2 = bna1k.calculate.marker.y()
 # clear existing limit lines
 bna1k.calculate.limit.clearlines()
 # add a limit line
-bna1k.calculate.limit.addline(1, 'max', 428e6, 438e6, -17.0, -17.0)
+bna1k.calculate.limit.addline(1, 'maximum', 428e6, 438e6, -17.0, -17.0)
 # enable the limit test
 bna1k.calculate.limit.teststate = 1
 # enable the limit line
+bna1k.calculate.limit.lineenable = 1
 # enable the large fail sign
+bna1k.display.failsign(1)
 # get the limit test state and print to the console
+print(bna1k.calculate.limit.failstatus())
 
-sleep(5000)
+sleep(5.0)
 bna1k.opc_query()
 
 bna1k.close()
