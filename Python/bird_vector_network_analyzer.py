@@ -83,6 +83,7 @@ class BirdVectorNetworkAnalyzer():
             self.display = self.Display(self.__instr_obj)
             self.format = self.Format(self.__instr_obj)
             self.hardcopy = self.HardCopy(self.__instr_obj)
+            self.initiate = self.Initiate(self.__instr_obj)
             self.mmemory = self.Mmemory(self.__instr_obj)
             self.sense = self.Sense(self.__instr_obj)
             self.service = self.Service(self.__instr_obj)
@@ -166,6 +167,7 @@ class BirdVectorNetworkAnalyzer():
         self.display._set_cal_kit(self.__cal_kit)
         self.format._set_cal_kit(self.__cal_kit)
         self.hardcopy._set_cal_kit(self.__cal_kit)
+        self.initiate._set_cal_kit(self.__cal_kit)
         self.mmemory._set_cal_kit(self.__cal_kit)
         self.sense._set_cal_kit(self.__cal_kit)
         self.service._set_cal_kit(self.__cal_kit)
@@ -185,6 +187,7 @@ class BirdVectorNetworkAnalyzer():
         self.display._set_channel(self.__channel)
         self.format._set_channel(self.__channel)
         self.hardcopy._set_channel(self.__channel)
+        self.initiate._set_channel(self.__channel)
         self.mmemory._set_channel(self.__channel)
         self.sense._set_channel(self.__channel)
         self.service._set_channel(self.__channel)
@@ -204,6 +207,7 @@ class BirdVectorNetworkAnalyzer():
         self.display._set_marker(self.__marker)
         self.format._set_marker(self.__marker)
         self.hardcopy._set_marker(self.__marker)
+        self.initiate._set_marker(self.__marker)
         self.mmemory._set_marker(self.__marker)
         self.sense._set_marker(self.__marker)
         self.service._set_marker(self.__marker)
@@ -223,6 +227,7 @@ class BirdVectorNetworkAnalyzer():
         self.display._set_parameter(self.__parameter)
         self.format._set_parameter(self.__parameter)
         self.hardcopy._set_parameter(self.__parameter)
+        self.initiate._set_parameter(self.__parameter)
         self.mmemory._set_parameter(self.__parameter)
         self.sense._set_parameter(self.__parameter)
         self.service._set_parameter(self.__parameter)
@@ -242,6 +247,7 @@ class BirdVectorNetworkAnalyzer():
         self.display._set_port(self.__port)
         self.format._set_port(self.__port)
         self.hardcopy._set_port(self.__port)
+        self.initiate._set_port(self.__port)
         self.mmemory._set_port(self.__port)
         self.sense._set_port(self.__port)
         self.service._set_port(self.__port)
@@ -261,6 +267,7 @@ class BirdVectorNetworkAnalyzer():
         self.display._set_standard(self.__standard)
         self.format._set_standard(self.__standard)
         self.hardcopy._set_standard(self.__standard)
+        self.initiate._set_standard(self.__standard)
         self.mmemory._set_standard(self.__standard)
         self.sense._set_standard(self.__standard)
         self.service._set_standard(self.__standard)
@@ -280,6 +287,7 @@ class BirdVectorNetworkAnalyzer():
         self.display._set_trace(self.__trace)
         self.format._set_trace(self.__trace)
         self.hardcopy._set_trace(self.__trace)
+        self.initiate._set_trace(self.__trace)
         self.mmemory._set_trace(self.__trace)
         self.sense._set_trace(self.__trace)
         self.service._set_trace(self.__trace)
@@ -2570,6 +2578,26 @@ class BirdVectorNetworkAnalyzer():
         
         def _set_cal_kit(self, kit):
             self.__cal_kit = kit
+        
+        def once(self):
+            self.__instr_obj.write(f":INIT{self.__channel}")
+        
+        @property
+        def continuous(self) -> int:
+            """Gets the state of continuous initiation mode for a select channel in the trigger system.
+
+            Returns:
+                int: 1 for ON, 0 for OFF
+            """
+            self.__instr_obj.query(f":INIT{self.__channel}:CONT?")
+
+        def continuous(self, state:int=1):
+            """Sets the state of continuous initiation mode for a select channel in the trigger system.
+
+            Args:
+                state (int, optional): 1 for ON, 0 for OFF. Defaults to 1.
+            """
+            self.__instr_obj.write(f":INIT{self.__channel}:CONT {state}")
 
     class Mmemory():
         def __init__(self, instrobj):
@@ -3785,3 +3813,58 @@ class BirdVectorNetworkAnalyzer():
         
         def _set_cal_kit(self, kit):
             self.__cal_kit = kit
+        
+        def immediate(self):
+            """Regardless of the setting of the trigger mode, generates a trigger immediately and executes a measurement.
+            """
+            self.__instr_obj.write(f":TRIG")
+        
+        def single(self):
+            """Regardless of the setting of the trigger mode, generates a trigger immediately and executes a measurement.
+            """
+            self.__instr_obj.write(f":TRIG:SING")
+        
+        @property
+        def source(self) -> str:
+            """Gets the trigger source.
+
+            Returns:
+                str: May be int for internal, ext for external, man for manual, or bus for bus. 
+            """
+            return self.__instr_obj.write(f":TRIG:SOUR?").rstrip().lower()
+        
+        @source.setter
+        def source(self, source:str="internal"):
+            """Sets the trigger source.
+
+            Args:
+                source (str, optional): Options of "internal", "external", "manual", or "bus". Defaults to "internal".
+            """
+            source_dict = {'internal': "INT",
+                           'external': "EXT",
+                           'manual': "MAN",
+                           'bus': "BUS",
+                           }
+            self.__instr_obj.write(f":TRIG:SOUR {source_dict[source]}")
+        
+        @property
+        def scope(self):
+            """This command gets the effective scope of triggering. When this property is enabled with a value of "active", only active channel is triggered. When this property is enabled with a value of "all", all channels are triggered.
+
+            Returns:
+                _type_: _description_
+            """
+            return self.__instr_obj.write(f":TRIG:SCOPE?").rstrip().lower()
+        
+        @scope.setter
+        def scope(self, selection:str="active"):
+            """This command sets the effective scope of triggering. When this property is enabled with a value of "active", only active channel is triggered. When this property is enabled with a value of "all", all channels are triggered.
+
+
+            Args:
+                selection (str, optional): _description_. Defaults to "active".
+            """
+            selection_dict = {'active': "ACT",
+                              'all': "ALL",
+                              }
+            self.__instr_obj.write(f":TRIG:SCOPE {selection_dict[selection]}")
