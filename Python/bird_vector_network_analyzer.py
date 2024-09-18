@@ -1907,35 +1907,158 @@ class BirdVectorNetworkAnalyzer():
                 self.__standard = None
                 self.__cal_kit = None
 
+                self.bandwidth = self.Bandwidth(self.__instr_obj)
                 self.function = self.Function(self.__instr_obj)
 
             def _set_channel(self, channel):
                 self.__channel = channel
+                self.bandwidth._set_channel(self.__channel)
                 self.function._set_channel(self.__channel)
             
             def _set_trace(self, trace):
                 self.__trace = trace
+                self.bandwidth._set_trace(self.__trace)
                 self.function._set_trace(self.__trace)
 
             def _set_marker(self, marker):
                 self.__marker = marker
+                self.bandwidth._set_marker(self.__marker)
                 self.function._set_marker(self.__marker)
             
             def _set_port(self, port):
                 self.__port = port
+                self.bandwidth._set_port(self.__port)
                 self.function._set_port(self.__port)
             
             def _set_parameter(self, parameter):
                 self.__parameter = parameter
+                self.bandwidth._set_parameter(self.__parameter)
                 self.function._set_parameter(self.__parameter)
             
             def _set_standard(self, standard):
                 self.__standard = standard
+                self.bandwidth._set_standard(self.__standard)
                 self.function._set_standard(self.__standard)
             
             def _set_cal_kit(self, kit):
                 self.__cal_kit = kit
             
+            class Bandwidth():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                
+                def _set_trace(self, trace):
+                    self.__trace = trace
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                
+                def _set_port(self, port):
+                    self.__port = port
+                
+                def _set_parameter(self, parameter):
+                    self.__parameter = parameter
+                
+                def _set_standard(self, standard):
+                    self.__standard = standard
+                
+                def searchdata(self) -> tuple[float, float, float, float, float, float]:
+                    """For the active trace of a select channel, reads out the bandwidth search result of marker 1 to marker 15, and reference marker(Mk:16).
+
+                    Returns:
+                        tuple[float, float, float, float, float, float]: Six values that represent bandwidth, center, min, max, q, and loss
+                    """
+                    data0, data1, data2, data3, data4, data5 = self.__instr_obj.query(f":CALC{self.__channel}:MARK{self.__marker}:BWID:DATA?").rstrip().split(',')
+                    return float(data0), float(data1), float(data2), float(data3), float(data4), float(data5)
+                
+                @property
+                def searchreference(self) -> str:
+                    """Reports the reference for the bandwidth search function: reference marker or absolute maximum value of the trace.
+
+                    Returns:
+                        str: Will report as 'mark', 'max', or 'min'.
+                    """
+                    return self.__instr_obj.query(f":CALC{self.__channel}:MARK:BWID:REF?")
+                
+                @searchreference.setter
+                def searchreference(self, ref:str='marker'):
+                    """Selects the reference for the bandwidth search function: reference marker or absolute maximum value of the trace.
+
+                    Args:
+                        ref (str, optional): Use 'marker', 'maximum', or 'minimum'. Defaults to 'marker'.
+                    """
+                    ref_dict = {'marker': "MARK",
+                                'maximum': "MAX",
+                                'minimum': "MIN",
+                                }
+                    self.__instr_obj.write(f":CALC{self.__channel}:MARK:BWID:REF {ref_dict[ref]}")
+
+                @property
+                def searchstate(self) -> int:
+                    """For the active trace of a select channel, reports the ON/OFF the bandwidth search state.
+
+                    Returns:
+                        int: 1 for ON, 0 for OFF.
+                    """
+                    return self.__instr_obj.query(f":CALC{self.__channel}:MARK:BWID?")
+                
+                @searchstate.setter
+                def searchstate(self, state:int=0):
+                    """For the active trace of a select channel, turns ON/OFF the bandwidth search result display.
+
+                    Args:
+                        state (int, optional): 1 for ON, 0 for OFF. Defaults to 0.
+                    """
+                    self.__instr_obj.write(f":CALC{self.__channel}:MARK:BWID {state}")
+                
+                @property
+                def searchtype(self) -> str:
+                    """For the active trace of a select channel, reports bandwidth search type.
+
+                    Returns:
+                        str: Reports 'bandpass' or 'notch'.
+                    """
+                    return self.__instr_obj.query(f":CALC{self.__channel}:MARK{self.__marker}:BWID:TYPE?")
+
+                @searchtype.setter
+                def searchtype(self, setting:str='bandpass'):
+                    """For the active trace of a select channel, sets bandwidth search type.
+
+                    Args:
+                        setting (str, optional): Use 'bandpass' or 'notch'. Defaults to 'bandpass'.
+                    """
+                    bwtype_dict = {'bandpass': "BPAS",
+                                   'notch': "NOTC",
+                                   }
+                    self.__instr_obj.write(f":CALC{self.__channel}:MARK{self.__marker}:BWID:TYPE {bwtype_dict[setting]}")
+
+                @property
+                def searchvalue(self) -> float:
+                    """For the active trace of a select channel, sets bandwidth definition value of marker 1 to marker 15 and reference marker(defined the smoothing band pass value)
+
+                    Returns:
+                        float: The reference value.
+                    """
+                    return self.__instr_obj.query(f":CALC{self.__channel}:MARK{self.__marker}:BWID:THR?")
+                
+                @searchvalue.setter
+                def searchvalue(self, value:float=-1.0):
+                    """For the active trace of a select channel, sets bandwidth definition value of marker 1 to marker 15 and reference marker(defined the smoothing band pass value).
+
+                    Args:
+                        value (float, optional): The reference value. Defaults to -1.0.
+                    """
+                    self.__instr_obj.write(f":CALC{self.__channel}:MARK{self.__marker}:BWID:THR {value}")
+
             class Function():
                 def __init__(self, instrobj):
                     self.__instr_obj = instrobj
