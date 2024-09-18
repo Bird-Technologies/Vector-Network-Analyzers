@@ -92,16 +92,10 @@ bna1k.calculate.marker.x = 438e6
 val1, val2 = bna1k.calculate.marker.y()
 
 # clear existing limit lines
-bna1k.calculate.limit.clearlines()
-# add a limit line
-bna1k.calculate.limit.addline(1, 'maximum', 428e6, 438e6, -17.0, -17.0)
-# enable the limit test
-bna1k.calculate.limit.teststate = 1
-# enable the limit line
-bna1k.calculate.limit.lineenable = 1
-# enable the large fail sign
-bna1k.display.failsign(1)
-# get the limit test state and print to the console
-print(bna1k.calculate.limit.failstatus())
+bna1k.calculate.marker.bandwidth.searchstate = 1
+bna1k.calculate.marker.bandwidth.searchtype = 'notch'
+bna1k.calculate.marker.bandwidth.searchvalue = -3.0
+bna1k.calculate.marker.bandwidth.searchreference = 'marker'
+bw, cent, minf, maxf, q, loss = bna1k.calculate.marker.bandwidth.searchdata()
 
 bna1k.close()
