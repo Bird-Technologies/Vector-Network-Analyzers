@@ -2970,6 +2970,29 @@ class BirdVectorNetworkAnalyzer():
                     filename += ".sta"
                 
                 self.__instr_obj.write(f":MMEM:STOR {filename}")
+            
+            @property
+            def statetype(self) -> str:
+                """Description: Selects the contents saved when saving the instrument state into a file.
+
+                Returns:
+                    str: "STAT" for state only, "CST" for calibration+state, "DST" for data+state, or "CDST" for calibration+data+state
+                """
+                return self.__instr_obj.write(f":MMEM:STOR:STYP?")
+
+            @statetype.setter
+            def statetype(self, select:str='state'):
+                """Description: Selects the contents saved when saving the instrument state into a file.
+
+                Args:
+                    select (str, optional): 'state' for state only, 'cal_n_state' for calibration+state, 'data_n_state' for data+state, and 'cal_n_data_n_state" for calibration+data+state. Defaults to 'state'.
+                """
+                st_dict = {'state': "STAT",
+                           'cal_n_state': "CST",
+                           'data_n_state': "DST",
+                           'cal_n_data_n_state': "CDST",
+                           }
+                self.__instr_obj.write(f":MMEM:STOR:STYP {st_dict[select]}")
                     
     @property
     def output(self):
