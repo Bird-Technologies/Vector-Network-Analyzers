@@ -2847,27 +2847,130 @@ class BirdVectorNetworkAnalyzer():
             self.__standard = None
             self.__cal_kit = None
 
+            self.load = self.Load(self.__instr_obj)
+            self.store = self.Store(self.__instr_obj)
+
         def _set_channel(self, channel):
             self.__channel = channel
+            self.load._set_channel(self.__channel)
+            self.store._set_channel(self.__channel)
 
         def _set_trace(self, trace):
             self.__trace = trace
+            self.load._set_trace(self.__trace)
+            self.store._set_trace(self.__trace)
 
         def _set_marker(self, marker):
             self.__marker = marker
+            self.load._set_marker(self.__marker)
+            self.store._set_marker(self.__marker)
         
         def _set_port(self, port):
             self.__port = port
+            self.load._set_port(self.__port)
+            self.store._set_port(self.__port)
         
         def _set_parameter(self, parameter):
             self.__parameter = parameter
+            self.load._set_parameter(self.__parameter)
+            self.store._set_parameter(self.__parameter)
         
         def _set_standard(self, standard):
             self.__standard = standard
+            self.load._set_standard(self.__standard)
+            self.store._set_standard(self.__standard)
         
         def _set_cal_kit(self, kit):
             self.__cal_kit = kit
+            self.load._set_cal_kit(self.__cal_kit)
+            self.store._set_cal_kit(self.__cal_kit)
         
+        class Load():
+            def __init__(self, instrobj):
+                self.__instr_obj = instrobj
+                self.__channel = None
+                self.__trace = None
+                self.__marker = None
+                self.__port = None
+                self.__parameter = None
+                self.__standard = None
+                self.__cal_kit = None
+
+            def _set_channel(self, channel):
+                self.__channel = channel
+
+            def _set_trace(self, trace):
+                self.__trace = trace
+
+            def _set_marker(self, marker):
+                self.__marker = marker
+            
+            def _set_port(self, port):
+                self.__port = port
+            
+            def _set_parameter(self, parameter):
+                self.__parameter = parameter
+            
+            def _set_standard(self, standard):
+                self.__standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self.__cal_kit = kit
+            
+            def state(self, filename:str="state01.sta"):
+                """Recalls the instrument state from a file. Expects filename extension: .sta but adds this if omitted.
+
+                Args:
+                    filename (str, optional): Up to 254 characters long. Defaults to "state01.sta".
+                """
+                if ".sta" not in filename:
+                    filename += ".sta"
+                
+                self.__instr_obj.write(f":MMEM:LOAD {filename}")
+
+        class Store():
+            def __init__(self, instrobj):
+                self.__instr_obj = instrobj
+                self.__channel = None
+                self.__trace = None
+                self.__marker = None
+                self.__port = None
+                self.__parameter = None
+                self.__standard = None
+                self.__cal_kit = None
+
+            def _set_channel(self, channel):
+                self.__channel = channel
+
+            def _set_trace(self, trace):
+                self.__trace = trace
+
+            def _set_marker(self, marker):
+                self.__marker = marker
+            
+            def _set_port(self, port):
+                self.__port = port
+            
+            def _set_parameter(self, parameter):
+                self.__parameter = parameter
+            
+            def _set_standard(self, standard):
+                self.__standard = standard
+            
+            def _set_cal_kit(self, kit):
+                self.__cal_kit = kit
+            
+            def state(self, filename:str="state01.sta"):
+                """Saves the instrument state into a file. Expects filename extension: .sta but adds this if omitted.
+
+                Args:
+                    filename (str, optional): Up to 254 characters long. Defaults to "state01.sta".
+                """
+                if ".sta" not in filename:
+                    filename += ".sta"
+                
+                self.__instr_obj.write(f":MMEM:STOR {filename}")
+                    
     @property
     def output(self):
         return "y"
