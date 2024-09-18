@@ -2862,6 +2862,25 @@ class BirdVectorNetworkAnalyzer():
                     """
                     self.__instr_obj.write(f":SENS{self.__channel}:CORR:COLL:THRU {porta},{portb}")
 
+                def electronic_calibration(self, caltype:str='solt1', porta:int=1, portb:int=2, portc:int=3, portd:int=4):
+                    """This method executes a 1-, 2-, 3-, or 4-port calibration of the specified port(s) of the active channel using the ECal (Electronic Calibration) module.
+
+                    Args:
+                        caltype (str, optional): Options of 'solt1' for 1-port, 'solt2' for 2-port, 'solt3' for 3-port, or 'solt4' for 4-port. Defaults to 'solt1'.
+                        porta (int, optional): Defines the port on the VNA which will be calibrated. Defaults to 1.
+                        portb (int, optional): Defines the port on the VNA which will be calibrated. Defaults to 2.
+                        portc (int, optional): Defines the port on the VNA which will be calibrated. Defaults to 3.
+                        portd (int, optional): Defines the port on the VNA which will be calibrated. Defaults to 4.
+                    """
+                    if caltype == "solt1":
+                        self.__instr_obj.write(f":SENS{self.__channel}:CORR:COLL:ECAL:SOLT1 {porta}")
+                    elif caltype == "solt2":
+                        self.__instr_obj.write(f":SENS{self.__channel}:CORR:COLL:ECAL:SOLT2 {porta},{portb}")
+                    elif caltype == "solt3":
+                        self.__instr_obj.write(f":SENS{self.__channel}:CORR:COLL:ECAL:SOLT3 {porta},{portb},{portc}")
+                    elif caltype == "solt4":
+                        self.__instr_obj.write(f":SENS{self.__channel}:CORR:COLL:ECAL:SOLT4 {porta},{portb},{portc},{portd}")
+                    
                 def method(self, method:str='open', porta:int=1, portb:int=2, portc:int=3, portd:int=4):
                     """Sets the calibration method to be applied upon successful calibration measurements.
 
