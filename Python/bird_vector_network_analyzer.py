@@ -1787,12 +1787,24 @@ class BirdVectorNetworkAnalyzer():
                     startlevel (float, optional): The start level of the limit line. Defaults to -10.0.
                     stoplevel (float, optional): The stop level of the limit line. Defaults to -10.0.
                 """
-                self.__instr_obj.write(f":CALC{self.__channel}:LIM:DATA {line},{setting},{startfreq},{stopfreq},{startlevel},{stoplevel}")
+                setting_dict = {'off': "0",
+                                'maximum': "1",
+                                'minimum': "2",
+                                'single': "3"}
+                self.__instr_obj.write(f":CALC{self.__channel}:LIM:DATA {line},{setting_dict[setting]},{startfreq},{stopfreq},{startlevel},{stoplevel}")
             
             def clearlines(self):
                 """Clears all limit lines present configured in the table.
                 """
                 self.__instr_obj.write(f":CALC{self.__channel}:LIM:DATA 0")
+
+            @property
+            def lineenable(self) -> int:
+                return self.__instr_obj.query(f":CALC{self.__channel}:LIM:DISP?")
+            
+            @lineenable.setter
+            def lineenable(self, state:int=1):
+                self.__instr_obj.write(f":CALC{self.__channel}:LIM:DISP {state}")
 
             @property
             def teststate(self) -> int:
@@ -1811,6 +1823,14 @@ class BirdVectorNetworkAnalyzer():
                     state (int, optional): 1 for ON, 0 for OFF. Defaults to 0.
                 """
                 self.__instr_obj.write(f":CALC{self.__channel}:LIM {state}")
+            
+            def failstatus(self):
+                """For the active trace of a select channel, reads out the limit test result.
+
+                Returns:
+                    _type_: 0 for FAIL, 1 for PASS.
+                """
+                return self.__instr_obj.query(f":CALC{self.__channel}:LIM:FAIL?")
 
             class Report():
                 def __init__(self, instrobj):
@@ -2405,6 +2425,14 @@ class BirdVectorNetworkAnalyzer():
                 def memory(self, red:int=128, green:int=128, blue:int=128):
                     self.__instr_obj.write(f":DISP:COL:TRAC:MEM {red},{green},{blue}")  
 
+        def failsign(self, state:int=0):
+            """Description:This command turns on or off the fail display on the UI display, when the limit test fails.
+
+            Args:
+                state (int, optional): 1 for ON, 0 for OFF. Defaults to 0.
+            """
+            self.__instr_obj.write(f":DISP:FSIG {state}")
+            
         class Window():
             def __init__(self, instrobj):
                 self.__instr_obj = instrobj
