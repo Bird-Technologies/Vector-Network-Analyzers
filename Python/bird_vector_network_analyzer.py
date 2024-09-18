@@ -1776,6 +1776,42 @@ class BirdVectorNetworkAnalyzer():
             def _set_cal_kit(self, kit):
                 self.__cal_kit = kit
 
+            def addline(self, line:int=1, setting:str='off', startfreq:float=423e6, stopfreq:float=443e6, startlevel:float=-10.0, stoplevel:float=-10.0):
+                """For the active trace of the select channel, configures a limit line in the table for the limit test.
+
+                Args:
+                    line (int, optional): Defines the limit line number. Defaults to 1.
+                    setting (str, optional): Use 'off', 'maximum', 'minimum', or 'single'. Defaults to 'off'.
+                    startfreq (float, optional): The start frequency of the limit line. Defaults to 423e6.
+                    stopfreq (float, optional): The stop frequency of the limit line. Defaults to 443e6.
+                    startlevel (float, optional): The start level of the limit line. Defaults to -10.0.
+                    stoplevel (float, optional): The stop level of the limit line. Defaults to -10.0.
+                """
+                self.__instr_obj.write(f":CALC{self.__channel}:LIM:DATA {line},{setting},{startfreq},{stopfreq},{startlevel},{stoplevel}")
+            
+            def clearlines(self):
+                """Clears all limit lines present configured in the table.
+                """
+                self.__instr_obj.write(f":CALC{self.__channel}:LIM:DATA 0")
+
+            @property
+            def teststate(self) -> int:
+                """For the active trace of a active channel, reports the ON/OFF state of the limit test function.
+
+                Returns:
+                    int: 1 for ON, 0 for OFF.
+                """
+                return self.__instr_obj.query(f":CALC{self.__channel}:LIM?")
+            
+            @teststate.setter
+            def teststate(self, state:int=0):
+                """For the active trace of a active channel, turns ON/OFF the limit test function.
+
+                Args:
+                    state (int, optional): 1 for ON, 0 for OFF. Defaults to 0.
+                """
+                self.__instr_obj.write(f":CALC{self.__channel}:LIM {state}")
+
             class Report():
                 def __init__(self, instrobj):
                     self.__instr_obj = instrobj
@@ -1907,6 +1943,56 @@ class BirdVectorNetworkAnalyzer():
                 
                 def _set_standard(self, standard):
                     self.__standard = standard
+                
+                def seachexecute(self):
+                    """Executes the marker search defined by the set parameters. 
+                    """
+                    self.__instr_obj.write(f":CALC{self.__channel}:MARK{self.__marker}:FUNC:EXEC")
+
+                @property
+                def searchtarget(self) -> float:
+                    """For the active trace of a select channel, gets the target value to be searched with marker 1 to marker 15 and reference marker(16).
+
+                    Returns:
+                        float: The target value. 
+                    """
+                    return self.__instr_obj.query(f":CALC{self.__channel}:MARK{self.__marker}:FUNC:TARG?")
+
+                @searchtarget.setter
+                def searchtarget(self, target:float=-10.0):
+                    """For the active trace of a select channel, sets the target value to be searched with marker 1 to marker 15 and reference marker(16).
+
+                    Args:
+                        target (float, optional): The target value. Defaults to -10.0.
+                    """
+                    self.__instr_obj.write(f":CALC{self.__channel}:MARK{self.__marker}:FUNC:TARG {target}")
+
+                @property
+                def searchtype(self) -> str:
+                    """For the active trace of a select channel, returns the search type for the active marker (1 to 15 or reference).
+
+                    Returns:
+                        str: May be 'max', 'min', 'peak', 'lpe', 'rpe', 'targ', 'ltar', or 'rtar'. Consult the programmer's manual for details.
+                    """
+                    return self.__instr_obj.query(f":CALC{self.__channel}:MARK{self.__marker}:FUNC:TYPE?")
+                
+                @searchtype.setter
+                def searchtype(self, search:str='maximum'):
+                    """For the active trace of a select channel, selects search type for the active marker (1 to 15 or reference).
+
+                    Args:
+                        search (str, optional): May be 'max', 'min', 'peak', 'lpe', 'rpe', 'targ', 'ltar', or 'rtar'. Consult the programmer's manual for details. Defaults to 'maximum'.
+                    """
+                    search_dict = {'maximum': "MAX",
+                                'minimum': "MIN",
+                                'peak': "PEAK",
+                                'leftpeak': "LPE",
+                                'rightpeak': "RPE",
+                                'target': "TARG",
+                                'leftarget': "LTAR",
+                                'righttarget': "RTAR",
+                                }
+                    self.__instr_obj.write(f":CALC{self.__channel}:MARK{self.__marker}:FUNC:TYPE {search_dict[search]}")
             
             def set(self, location:str="center"):
                 """For the active trace of a select channel, sets the position value of the marker to the x-axis location specified. These are the quick options when a specific frequency is not applied.
