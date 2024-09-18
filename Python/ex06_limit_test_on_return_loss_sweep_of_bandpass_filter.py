@@ -9,7 +9,7 @@ Example Description:
         return loss trace defining the test region and making limit
         lines and pass/fail indicators visible in the software UI as
         well as reporting the pass/fail status over the instrument
-        bus.  
+        bus. Marker search is also used. 
 
 @verbatim
 
@@ -113,7 +113,47 @@ bna1k.display.failsign(1)
 # get the limit test state and print to the console
 print(bna1k.calculate.limit.failstatus())
 
-sleep(5.0)
+# Add a second trace in the same channel to display VSWR, 
+# make it active, and use the same markers to help print
+# data to the console. 
+bna1k.calculate.parameter.tracecount = 2
+bna1k.trace = 2
+bna1k.calculate.parameter.traceselect = bna1k.trace
+temp = bna1k.calculate.parameter.trace_sparam
+bna1k.calculate.parameter.trace_sparam = "s11"
+bna1k.calculate.format.type = "swr"
+bna1k.display.window.trace.y.autoscale()
+
+bna1k.marker = 1
+val1, val2 = bna1k.calculate.marker.y()
+
+bna1k.marker = 2
+val1, val2 = bna1k.calculate.marker.y()
+
+bna1k.marker = 3
+val1, val2 = bna1k.calculate.marker.y()
+
+# Add a third trace and allocate it in a different pane, 
+# make it active, measure the impedance values on the 
+# Smith chart. Print the marker data to the console. 
+bna1k.calculate.parameter.tracecount = 3
+bna1k.trace = 3
+bna1k.calculate.parameter.traceselect = bna1k.trace
+bna1k.display.window.layout = 4
+bna1k.display.window.maximize = 1
+bna1k.calculate.parameter.trace_sparam = "s21"
+bna1k.calculate.format.type = "mlog"
+bna1k.display.window.trace.y.autoscale()
+
+bna1k.marker = 1
+val1, val2 = bna1k.calculate.marker.y()
+
+bna1k.marker = 2
+val1, val2 = bna1k.calculate.marker.y()
+
+bna1k.marker = 3
+val1, val2 = bna1k.calculate.marker.y()
+
 bna1k.opc_query()
 
 bna1k.close()
