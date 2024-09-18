@@ -1,14 +1,11 @@
 """
 Example Description:
         This example shows how to use remote commands to perform save
-        and recall of user setups. the
-        bandpass filter characterization steps that are covered in the
-        associated application note featured on the VNA landing pages
-        on birdrf.com. Specifically, this includes defining the frequency
-        range of interest, measuring insertion loss at select points
-        using markers; enabling the bandwidth search to help evaluate
-        the capability of the bandpass filter inserted between the two
-        test ports. 
+        and recall of user setups. The state type is first specifed, 
+        helping to point out to the user that calibration and data items
+        can be preserved along with the instrument setup. The setup is
+        saved to file. A preset is then called to return to system defaults,
+        eliminating all prior configurations. Then the state is recalled.
 
 @verbatim
 
@@ -92,6 +89,8 @@ bna1k.calculate.marker.state = 1
 bna1k.calculate.marker.x = 438e6
 val1, val2 = bna1k.calculate.marker.y()
 
+# Define what items to save
+bna1k.mmemory.store.statetype = 'cal_n_state'
 # Save the system configuration
 bna1k.mmemory.store.state("mystate")
 # Perform a preset/reset
