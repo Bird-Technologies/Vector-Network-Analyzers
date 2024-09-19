@@ -63,7 +63,7 @@ portb = 2
 input(f"Connect ports {porta} and {portb} to the Ecal module then enter y to continue.")
 
 bna1k.sense.correction.collection.electronic_calibration('solt2', 1, 2)
-sleep(5000)
+sleep(5.0)
 bna1k.opc_query()
 
 bna1k.close()
