@@ -3130,6 +3130,15 @@ class BirdVectorNetworkAnalyzer():
                 def _set_channel(self, channel):
                     self.__channel = channel
                 
+                def _set_trace(self, trace):
+                    self.__trace = trace
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                
+                def _set_port(self, port):
+                    self.__port = port
+
                 @property
                 def controldata(self) -> str:
                     """This command gets the state of each segment in the segment sweep table of selected channel
@@ -3140,10 +3149,15 @@ class BirdVectorNetworkAnalyzer():
                     return self.__instr_obj.query(f":SENS{self.__channel}:SEGM:LIST:CONT:DATA?")
                 
                 @controldata.setter
-                def controldata(self, *args):
+                def controldata(self, settingstuple:tuple):
+                    """This command sets the state of each segment in the segment sweep table of selected channel
+
+                    Args:
+                        settingstuple (tuple): An integer list that defines the state (0 or 1) of the segements in a segment sweep. 
+                    """
                     strlist = ""
                     k = 0
-                    for j in args:
+                    for j in settingstuple:
                         if k == 0:
                             strlist = str(j)
                             k = 1
@@ -3163,6 +3177,18 @@ class BirdVectorNetworkAnalyzer():
                     self.__parameter = None
                     self.__standard = None
                     self.__cal_kit = None
+                                
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                
+                def _set_trace(self, trace):
+                    self.__trace = trace
+
+                def _set_marker(self, marker):
+                    self.__marker = marker
+                
+                def _set_port(self, port):
+                    self.__port = port
 
         class Correction():
             def __init__(self, instrobj):
