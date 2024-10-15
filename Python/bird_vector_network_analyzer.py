@@ -3016,43 +3016,154 @@ class BirdVectorNetworkAnalyzer():
             self.correction = self.Correction(self.__instr_obj)
             self.frequency  = self.Frequency(self.__instr_obj)
             self.sweep      = self.Sweep(self.__instr_obj)
+            self.segment    = self.Segment(self.__instr_obj)
 
         def _set_channel(self, channel):
             self.__channel = channel
             self.correction._set_channel(self.__channel)
             self.frequency._set_channel(self.__channel)
             self.sweep._set_channel(self.__channel)
+            self.segment._set_channel(self.__channel)
 
         def _set_trace(self, trace):
             self.__trace = trace
             self.correction._set_trace(self.__trace)
             self.frequency._set_trace(self.__trace)
+            self.sweep._set_trace(self.__trace)
+            self.segment._set_trace(self.__trace)
 
         def _set_marker(self, marker):
             self.__marker = marker
             self.correction._set_marker(self.__marker)
             self.frequency._set_marker(self.__marker)
+            self.sweep._set_marker(self.__marker)
+            self.segment._set_marker(self.__marker)
         
         def _set_port(self, port):
             self.__port = port
             self.correction._set_port(self.__port)
             self.frequency._set_port(self.__port)
+            self.segment._set_port(self.__port)
+            self.sweep._set_port(self.__port)
         
         def _set_parameter(self, parameter):
             self.__parameter = parameter
             self.correction._set_parameter(self.__parameter)
             self.frequency._set_parameter(self.__parameter)
+            self.segment._set_parameter(self.__parameter)
+            self.sweep._set_parameter(self.__parameter)
         
         def _set_standard(self, standard):
             self.__standard = standard
             self.correction._set_standard(self.__standard)
             self.frequency._set_standard(self.__parameter)
+            self.segment._set_standard(self.__parameter)
+            self.sweep._set_standard(self.__parameter)
         
         def _set_cal_kit(self, kit):
             self.__cal_kit = kit
             self.correction._set_cal_kit(self.__cal_kit)
             self.frequency._set_cal_kit(self.__cal_kit)
+            self.segment._set_cal_kit(self.__cal_kit)
+            self.sweep._set_cal_kit(self.__cal_kit)
         
+        class Segment():
+            def __init__(self, instrobj):
+                self.__instr_obj = instrobj
+                self.__channel = None
+                self.__trace = None
+                self.__marker = None
+                self.__port = None
+                self.__parameter = None
+                self.__standard = None
+                self.__cal_kit = None
+
+                self.list = self.List(self.__instr_obj)
+                self.sweep = self.Sweep(self.__instr_obj)
+
+            def _set_channel(self, channel):
+                self.__channel = channel
+                self.list._set_channel(self.__channel)
+                self.sweep._set_channel(self.__channel)
+
+            def _set_trace(self, trace):
+                self.__trace = trace
+                self.list._set_trace(self.__trace)
+                self.sweep._set_trace(self.__trace)
+
+            def _set_marker(self, marker):
+                self.__marker = marker
+                self.list._set_marker(self.__marker)
+                self.sweep._set_marker(self.__marker)
+            
+            def _set_port(self, port):
+                self.__port = port
+                self.list._set_port(self.__port)
+                self.sweep._set_port(self.__port)
+            
+            def _set_parameter(self, parameter):
+                self.__parameter = parameter
+                self.list._set_parameter(self.__parameter)
+                self.sweep._set_parameter(self.__parameter)
+            
+            def _set_standard(self, standard):
+                self.__standard = standard
+                self.list._set_standard(self.__standard)
+                self.sweep._set_standard(self.__standard)
+            
+            def _set_cal_kit(self, kit):
+                self.__cal_kit = kit
+                self.list._set_cal_kit(self.__cal_kit)
+                self.sweep._set_cal_kit(self.__cal_kit)
+            
+            class List():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+                
+                def _set_channel(self, channel):
+                    self.__channel = channel
+                
+                @property
+                def controldata(self) -> str:
+                    """This command gets the state of each segment in the segment sweep table of selected channel
+
+                    Returns:
+                        str: A string list of 1's or 0's indicating the enabled state of an individual segment in a segmented sweep.
+                    """
+                    return self.__instr_obj.query(f":SENS{self.__channel}:SEGM:LIST:CONT:DATA?")
+                
+                @controldata.setter
+                def controldata(self, *args):
+                    strlist = ""
+                    k = 0
+                    for j in args:
+                        if k == 0:
+                            strlist = str(j)
+                            k = 1
+                        else:
+                            strlist = strlist + "," + str(j)
+                    
+                    k = 0
+                    self.__instr_obj.write(f":SENS{self.__channel}:SEGM:LIST:CONT:DATA {strlist}")
+            
+            class Sweep():
+                def __init__(self, instrobj):
+                    self.__instr_obj = instrobj
+                    self.__channel = None
+                    self.__trace = None
+                    self.__marker = None
+                    self.__port = None
+                    self.__parameter = None
+                    self.__standard = None
+                    self.__cal_kit = None
+
         class Correction():
             def __init__(self, instrobj):
                 self.__instr_obj = instrobj
