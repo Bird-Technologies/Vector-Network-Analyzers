@@ -3167,6 +3167,19 @@ class BirdVectorNetworkAnalyzer():
                     k = 0
                     self.__instr_obj.write(f":SENS{self.__channel}:SEGM:LIST:CONT:DATA {strlist}")
             
+            def create_segment_table(self, mode:int=0, ifbw_en:int=1, pwr_en:int=0, del_en:int=0, swp_en:int=0, time_en:int=0, segment_count:int=1, 
+                                     start_n:tuple=(300e3), stop_n:tuple=(300e3), pts_n:tuple=(2), ifbw_n:tuple=(70e3), pow_n:tuple=(0.0), del_n:tuple=(0.0),
+                                     swp_n:tuple=("LIN"), time_n:tuple=(0)):
+                cmd_str = f":SENS{self.__channel}:SEGM:DATA 5,{mode},{ifbw_en},{pwr_en},{del_en},{swp_en},{time_en},{segment_count},"
+                print(cmd_str)
+
+                self.__instr_obj.write(cmd_str)
+                return 0
+            
+            def retrieve_segment_table(self):
+                self.__instr_obj.write(f":SENS{self.__channel}:SEGM:LIST:CONT:DATA {strlist}")
+                return 0
+            
             class Sweep():
                 def __init__(self, instrobj):
                     self.__instr_obj = instrobj
@@ -3189,6 +3202,14 @@ class BirdVectorNetworkAnalyzer():
                 
                 def _set_port(self, port):
                     self.__port = port
+
+                def points(self) -> int:
+                    count = int(self.__instr_obj.query(f":SENS{self.__channel}:SEGM:SWE:POIN?").rstrip())
+                    return count
+                
+                def time(self) -> float:
+                    summedtime = float(self.__instr_obj.query(f":SENS{self.__channel}:SEGM:SWE:TIME?").rstrip())
+                    return summedtime
 
         class Correction():
             def __init__(self, instrobj):
@@ -4166,6 +4187,39 @@ class BirdVectorNetworkAnalyzer():
                     time (float): Time before each measurement point.
                 """
                 self.__instr_obj.write(f"SENS{self.__channel}:SWE:POIN:TIME {time}")  
+            
+            @property
+            def sweeptype(self)->str:
+                """Gets the sweep type of a select channel.
+
+                Returns:
+                    str: Returns linear, logarithmic, segment, or power. 
+                """
+                temp = self.__instr_obj.query(f"SENS{self.__channel}:SWE:TYPE?").rstrip()
+                if "LIN" in temp:
+                    swtp = "linear"
+                elif "LOG" in temp:
+                    swtp = "logarithmic"
+                elif "SEG" in temp:
+                    swtp = "segment"
+                elif "POW" in temp:
+                    swtp = "power"
+                return swtp
+            
+            @sweeptype.setter
+            def sweeptype(self, sweep_type:str="linear"):
+                """Sets the sweep type of a select channel.
+
+                Args:
+                    sweep_type (str, optional): Pass "linear", "logarithmic", "segment", or "power". Defaults to "linear".
+                """
+                sweep_dict = {'linear': "LIN",
+                           'logarithmic': "LOG",
+                           'segment': "SEG",
+                           'power': "POW",
+                           }
+                
+                self.__instr_obj.write(f"SENS{self.__channel}:SWE:TYPE {sweep_dict[sweep_type]}")
 
     class Service():
         def __init__(self, instrobj):
