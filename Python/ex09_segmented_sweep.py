@@ -53,6 +53,12 @@ bna1k.sense.frequency.start = 800e6
 bna1k.sense.frequency.stop = 925e6
 bna1k.sense.sweep.points = 1001
 
+bna1k.sense.sweep.sweeptype = "segment"
+tempj = bna1k.sense.sweep.sweeptype
+
+bna1k.sense.segment.create_segment_table(mode=0, ifbw_en=1, pwr_en=0, del_en=0, swp_en=0, segment_count=3)
+point_count = bna1k.sense.segment.sweep.points()
+point_time = bna1k.sense.segment.sweep.time()
 bna1k.sense.segment.list.controldata = (1,0,1,1)
 
 ############################################################
