@@ -39,6 +39,13 @@ SOFTWARE.
  
 """
 from bird_vector_network_analyzer import BirdVectorNetworkAnalyzer
+import time
+
+def write_data_to_file(file_and_path, write_string):
+    ofile = open(output_data_path, "a")  # Open/create the target data
+    ofile.write(write_string)
+    ofile.close()                       # Close the data file.
+    return
 
 bna1k = BirdVectorNetworkAnalyzer()
 
@@ -91,26 +98,57 @@ bna1k.calculate.parameter.trace_sparam = "s11"
 print(bna1k.calculate.format.type)
 bna1k.calculate.format.type = "mlog"
 
-# Trigger the sweep the autoscale the trace.
+# Trigger an initial sweep for reference then autoscale the trace.
 bna1k.trigger.immediate()
 bna1k.opc_query()
 bna1k.display.window.trace.y.autoscale()
 
+# Establish markers at the points of interest
 bna1k.marker = 1
 print(bna1k.calculate.marker.state)
 bna1k.calculate.marker.state = 1
-bna1k.calculate.marker.set("center")
-val1, val2 = bna1k.calculate.marker.y()
-
+bna1k.calculate.marker.x = 329e6
 bna1k.marker = 2
 bna1k.calculate.marker.state = 1
-bna1k.calculate.marker.x = 824e6
-val1, val2 = bna1k.calculate.marker.y()
-
+bna1k.calculate.marker.x = 834e6
 bna1k.marker = 3
 bna1k.calculate.marker.state = 1
-bna1k.calculate.marker.x = 900e6
-val1, val2 = bna1k.calculate.marker.y()
+bna1k.calculate.marker.x = 888e6
+bna1k.marker = 4
+bna1k.calculate.marker.state = 1
+bna1k.calculate.marker.x = 2.4e9
+
+# Create a file to save data to
+output_data_path = time.strftime("loss_data_%Y-%m-%d_%H-%M-%S.csv")
+
+# Write the header info to file
+write_data_to_file(output_data_path, "M1_FREQ,M1_LOSS,M2_FREQ,M2_LOSS,M3_FREQ,M3_LOSS,M4_FREQ,M4_LOSS,")
+
+# Trigger a sweep every 10 s, capturing data from all four markers and log to file for 24 hr
+t1 = time.time()
+for j in range(8640):
+        # Trigger the sweep
+        bna1k.trigger.immediate()
+        bna1k.opc_query()
+        
+        # Collect measurements from all markers
+        readings_string = ""
+        for k in range(1, 5):
+                bna1k.marker = k
+                val1 = ""
+                val2 = ""
+                val1, val2 = bna1k.calculate.marker.y()
+                readings_string += f"{val1},{val2},"
+
+        # Write to file
+        write_data_to_file(output_data_path, readings_string)
+        
+        flag_j = 0
+        while flag_j == 0:
+                t2 = time.time()
+                if (t2-t1 >= 10.0):
+                       flag_j = 1
+        t2 = t1
 
 bna1k.close()
 
