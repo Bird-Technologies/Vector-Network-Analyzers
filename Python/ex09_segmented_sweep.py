@@ -39,7 +39,7 @@ SOFTWARE.
 
 @endverbatim
 
-@file ex04_triggered_return_loss_sweep.py
+@file ex09_segmented_sweep.py
  
 """
 from bird_vector_network_analyzer import BirdVectorNetworkAnalyzer
