@@ -2917,6 +2917,14 @@ class BirdVectorNetworkAnalyzer():
             def _set_cal_kit(self, kit):
                 self.__cal_kit = kit
             
+            def segment_table(self, filename:str="seg_table.seg"):
+                """Description: Recalls the specified segment sweep table file.
+
+                Args:
+                    filename (str, optional): The filename (which should end with the *.seg extension) to be used for the segment table. Defaults to "seg_table.seg".
+                """
+                self.__instr_obj.write(f":MMEM:LOAD:SEGM {filename}")
+
             def state(self, filename:str="state01.sta"):
                 """Recalls the instrument state from a file. Expects filename extension: .sta but adds this if omitted.
 
@@ -2960,6 +2968,14 @@ class BirdVectorNetworkAnalyzer():
             def _set_cal_kit(self, kit):
                 self.__cal_kit = kit
             
+            def segment_table(self, filename:str="seg_table.seg"):
+                """Description: Save the segment sweep table for the active channel into a file in the SEG format.
+
+                Args:
+                    filename (str, optional): The filename (which should end with the *.seg extension) to be used for the segment table. Defaults to "seg_table.seg".
+                """
+                self.__instr_obj.write(f":MMEM:STOR:SEGM {filename}")
+
             def state(self, filename:str="state01.sta"):
                 """Saves the instrument state into a file. Expects filename extension: .sta but adds this if omitted.
 
@@ -3170,14 +3186,58 @@ class BirdVectorNetworkAnalyzer():
             def create_segment_table(self, mode:int=0, ifbw_en:int=1, pwr_en:int=0, del_en:int=0, swp_en:int=0, time_en:int=0, segment_count:int=1, 
                                      start_n:tuple=(300e3), stop_n:tuple=(300e3), pts_n:tuple=(2), ifbw_n:tuple=(70e3), pow_n:tuple=(0.0), del_n:tuple=(0.0),
                                      swp_n:tuple=("LIN"), time_n:tuple=(0)):
-                cmd_str = f":SENS{self.__channel}:SEGM:DATA 5,{mode},{ifbw_en},{pwr_en},{del_en},{swp_en},{time_en},{segment_count},"
+                status = 0
+                cmd_str = f":SENS{self.__channel}:SEGM:DATA 5,{mode},{ifbw_en},{pwr_en},{del_en},{swp_en},{time_en},{segment_count}"
                 print(cmd_str)
 
-                self.__instr_obj.write(cmd_str)
-                return 0
+                # verify that all required segment inputs have the same index count
+                if len(start_n) != segment_count:
+                    status += -1
+                if len(stop_n) != segment_count:
+                    status += -2
+                if len(pts_n) != segment_count:
+                    status += -4
+                if ifbw_en == 1:
+                    if len(ifbw_n) != segment_count:
+                        status += -8
+                if pwr_en == 1:
+                    if len(pow_n) != segment_count:
+                        status += -16
+                if del_en == 1:
+                    if len(del_n) != segment_count:
+                        status += -32
+                if swp_en == 1:
+                    if len(swp_n) != segment_count:
+                        status += -64
+                if time_en == 1:
+                    if len(time_n) != segment_count:
+                        status += -128
+
+                # if there are indescrepancies on the sizes of any of the input tuples for segment attributes that
+                        # need to be accounted for, we can skip building of the remainder of the command and just
+                        # return the status
+                cmd_add = ""
+                if status == 0:
+                    for j in range(segment_count):
+                        cmd_add += f",{start_n[j]}"
+                        cmd_add += f",{stop_n[j]}"
+                        cmd_add += f",{pts_n[j]}"
+                        if ifbw_en == 1:
+                            cmd_add += f",{ifbw_n[j]}"
+                        if pow_n == 1:
+                            cmd_add += f",{pow_n[j]}"
+                        if del_en == 1:
+                            cmd_add += f",{del_n[j]}"
+                        if swp_en == 1:
+                            cmd_add += f",{swp_n[j]}"
+                        if time_en == 1:
+                            cmd_add += f",{time_n[j]}"
+                    cmd_str += cmd_add
+                    self.__instr_obj.write(cmd_str)
+                return status
             
             def retrieve_segment_table(self):
-                self.__instr_obj.write(f":SENS{self.__channel}:SEGM:LIST:CONT:DATA {strlist}")
+                self.__instr_obj.write(f":SENS{self.__channel}:SEGM:LIST:CONT:DATA?")
                 return 0
             
             class Sweep():
