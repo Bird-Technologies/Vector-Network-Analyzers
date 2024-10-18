@@ -8,6 +8,10 @@ Example Description:
         are returned to the operator then the segment table is saved to
         file for later recall. 
 
+        The VNA is configured for triggered sweeps. The logic will loop
+        to capture return loss data across four marker points every 10
+        seconds for 24 hours, writing the measurements to CSV file.
+
 
 @verbatim
 
