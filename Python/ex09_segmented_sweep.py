@@ -1,8 +1,13 @@
 """
 Example Description:
-        This example shows how to use remote commands to perform configure
-        the VNA for a triggered sweep of return loss (S11). Measurements are
-        then acquired from marker points and returned to the user. 
+        This example shows how to configure the VNA for a segmented sweep
+        using a single port return loss measurement (S11 parameters). The
+        segments are chosen based on the four most prominent return loss
+        areas witnessed when evaluating a Bird AT-800 antenna at 329 MHz,
+        834 MHz, 888 MHz, and 2.4 GHz. The number of sweep points and time
+        are returned to the operator then the segment table is saved to
+        file for later recall. 
+
 
 @verbatim
 
@@ -48,18 +53,25 @@ bna1k.trace = 1
 bna1k.initiate.continuous = 0
 bna1k.trigger.source = 'bus'
 
-# Set the center frequency, span, and points
-bna1k.sense.frequency.start = 800e6
-bna1k.sense.frequency.stop = 925e6
-bna1k.sense.sweep.points = 1001
-
 bna1k.sense.sweep.sweeptype = "segment"
 tempj = bna1k.sense.sweep.sweeptype
 
-bna1k.sense.segment.create_segment_table(mode=0, ifbw_en=1, pwr_en=0, del_en=0, swp_en=0, segment_count=3)
+recall_seg_table = 0
+if recall_seg_table == 0:
+        bna1k.sense.segment.create_segment_table(mode=0, ifbw_en=1, pwr_en=0, del_en=0, swp_en=0, segment_count=8,
+                                         start_n=(300e3, 290e6, 350e6, 824e6, 850e6, 878e6, 898e6, 2.3e9),
+                                         stop_n= (290e6, 350e6, 824e6, 850e6, 878e6, 898e6, 2.3e9, 2.5e9),
+                                         pts_n=  (    2,   101,     2,   101,     2,   101,     2,   101), 
+                                         ifbw_n= ( 70e3,  70e3,  70e3,  70e3,  70e3,  70e3,  70e3,  70e3))
+        bna1k.mmemory.store.segment_table("ant800.seg")
+else:
+        bna1k.mmemory.load.segment_table("ant800.seg")
+
 point_count = bna1k.sense.segment.sweep.points()
 point_time = bna1k.sense.segment.sweep.time()
-bna1k.sense.segment.list.controldata = (1,0,1,1)
+
+# Include this to show how a user can enable and disable measurements for different segments for a given sweep. 
+bna1k.sense.segment.list.controldata = (1,1,1,1,1,1,1,1)
 
 ############################################################
 #       If you have not yet performed calibration it
