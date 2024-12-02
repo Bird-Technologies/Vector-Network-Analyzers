@@ -1,7 +1,11 @@
 """
 Example Description:
-        This example shows how to use remote commands to perform a single
-        port calibration on the vector network analyzer.
+        This example shows the setup of four separate traces - one for a
+        specific given s-parameter each - within a single channel and
+        allocating them in individual views/panes. Numerous markers are
+        enabled and the data points are read out. This helps the user to
+        better understand the setup processing speed versus the data
+        measurement processing and extraction speed.
 
 @verbatim
 
@@ -29,7 +33,7 @@ SOFTWARE.
 
 @endverbatim
 
-@file ex01_single_port_calibration.py
+@file ex10_setup_multiple_traces_allocated_individual_panes.py
  
 """
 from bird_vector_network_analyzer import BirdVectorNetworkAnalyzer
@@ -84,7 +88,7 @@ bna1k.calculate.format.type = "mlog"
 bna1k.display.window.trace.y.autoscale()
 bna1k.display.window.trace.y.scale = 10.0
 
-# Set markers at select frequencies
+# Set markers at select frequencies and traces
 bna1k.trace = 1
 bna1k.marker = 1
 mkr_freqs = (380e6, 423e6, 770.5e6, 816e6, 876.5e6, 921.5e6, 940.1e6, 1.4595e9, 1.8451e9, 1.9050e9, 2.1454e9, 2.6550e9)
@@ -100,5 +104,5 @@ for trace in range(1, 5):
         bna1k.marker = j
         val1, val2 = bna1k.calculate.marker.y()
         print(f"Trace{bna1k.trace}, Marker{bna1k.marker}: {val1}, {val2}")
-        
+
 bna1k.close()
