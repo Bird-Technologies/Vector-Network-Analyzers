@@ -2706,11 +2706,29 @@ class BirdVectorNetworkAnalyzer():
                         self.__port = port
 
                     def autoscale(self):
-                        """For a select trace of a select channel, executes the auto scale (function to
-                            automatically adjust the value of the reference graticule and the scale per
-                            division to display t he trace appropriately).
+                        """
+                        For a select trace of a select channel, executes the auto scale (function to
+                        automatically adjust the value of the reference graticule and the scale per
+                        division to display t he trace appropriately).
                         """
                         self.__instr_obj.write(f"DISP:WIND{self.__channel}:TRAC{self.__trace}:Y:AUTO")
+                    
+                    @property
+                    def scale(self) -> float:
+                       strval = self.__instr_obj.query(f"DISP:WIND{self.__channel}:TRAC{self.__trace}:Y:PDIV?").rstrip()
+                       return float(strval)
+                
+                    @scale.setter
+                    def scale(self, per_division:float=10.0):
+                        """
+                        Sets or reads out the trace scale. Sets the scale per division when the data
+                        format is in the rectangular format. Sets the full-scale value when the data format
+                        is in the Smith chart format or the polar format.
+
+                        Args:
+                            per_division (float, optional): _description_. Defaults to 10.0.
+                        """
+                        self.__instr_obj.write(f"DISP:WIND{self.__channel}:TRAC{self.__trace}:Y:PDIV {per_division}")
 
         @property
         def enable(self) -> int:
