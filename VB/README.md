@@ -1,4 +1,4 @@
-<a><img alt="Vite" src="https://img.shields.io/static/v1?label=build_tool&message=Vite&color=#24ea1b"/></a>
+<a><img alt="VB" src="https://img.shields.io/static/v1?label=build_tool&message=Vite&color=#24ea1b"/></a>
 
 ## Directory
 
